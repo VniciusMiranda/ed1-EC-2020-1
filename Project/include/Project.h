@@ -7,6 +7,7 @@
 typedef struct Project_List_Element
 {
     int id;
+    WINDOW *win;
     struct Project project;
     struct Project_List_Element *next_project;
 } Project_List_Element_t;

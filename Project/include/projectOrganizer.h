@@ -12,7 +12,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "Exceptions.h"
+#define ERROR -1
+#define SUCCESS 0
 
 #define True 1
 #define False 0 
@@ -20,10 +21,8 @@
 // tamanhos máximos
 #define TITLE_SIZE 256
 #define DESCRIPTION_SIZE 1024
-
 #define NAME_SIZE 64
 #define EMAIL_SIZE 64
-#define BIO_SIZE 512
 
 typedef int boolean;
 

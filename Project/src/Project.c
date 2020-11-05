@@ -2,6 +2,11 @@
 #include <stdlib.h>
 #include "Project.h"
 
+#define PROJECT_DISPLAY_WIDTH 25
+#define PROJECT_DISPLAY_HEIGHT 6 
+
+int lastWidth = 0;
+
 Project createProject(Title title, Description description)
 {
     if (strlen(title) >= TITLE_SIZE || strlen(description) >= DESCRIPTION_SIZE)
@@ -22,18 +27,25 @@ Project createProject(Title title, Description description)
     return project;
 }
 
-int showProjects()
+int showProjects(WINDOW w)
 {
     ProjectListElement actual = firstProject;
+    int title_len;
     if (!actual)
-        return ERROR;
-    printf("\n");
+        mvwprintw(w, 2, 3, "VAZIO");
+        wrefresh(w);
+        return SUCCESS;
     while (actual)
     {
-        printf("\n%d | Projeto %s", actual->id, actual->project->title);
+        title_len = strlen(actual->project->title);
+        actual->win = newwin(PROJECT_DISPLAY_HEIGHT, PROJECT_DISPLAY_WIDTH, 4, lastWidth + 1);
+        refresh();
+        box(actual->win, 0, 0);
+        mvwprintw(actual->w, (PROJECT_DISPLAY_HEIGHT - 2)/2, (PROJECT_DISPLAY_WIDTH - title_len)/2, "%s", actual->project->title);
+        wrefresh(actual->win);
         actual = actual->next_project;
+        lastWidth += (PROJECT_DISPLAY_WIDTH + 1);
     }
-    printf("\n");
     return SUCCESS;
 }
 
@@ -149,6 +161,7 @@ int pushProject(Project project)
             if (actual->next_project == NULL)
             {
                 actual->next_project->id = actual->id + 1;
+                actual->next_project->win = NULL;
                 actual->next_project->project = project;
                 actual->next_project->next_project = NULL;
                 return SUCCESS;
@@ -159,6 +172,7 @@ int pushProject(Project project)
     else
     {
         firstProject->id = 1;
+        firstProject->win = NULL;
         firstProject->next_project = NULL;
         firstProject->project = project;
     }
