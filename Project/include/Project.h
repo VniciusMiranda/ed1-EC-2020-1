@@ -1,12 +1,14 @@
 #ifndef __PROJECT_H__
 #define __PROJECT_H__
 
-#include "ProjectOrganizer.h"
+#include "projectOrganizer.h"
+#include <ncurses.h>
 
 // Project List struct
 typedef struct Project_List_Element
 {
     int id;
+    WINDOW *win;
     struct Project project;
     struct Project_List_Element *next_project;
 } Project_List_Element_t;
@@ -20,57 +22,60 @@ typedef struct Project_Element
 {
     Title title;
     Description description;
-    struct CollaboratorsList collaboratorListElement; // Ponteiro para o primeiro elemento da lista de colaboradores
+    struct CollaboratorsListElement collaboratorsListElement; // Ponteiro para o primeiro elemento da lista de colaboradores
 } Project_Element_t;
 
 typedef Project_Element_t *Project;
 
-
 // Collaborator List struct
-typedef struct Collaborators_List
+typedef struct Collaborators_List_Element
 {
     int id;
     struct Collaborator collaborator;  // Perfil do colaborador
-    struct Collaborators_List *next_collaborator;   // Ponteiro para a próxima struct da lista de colaborador com o ponteiro do próximo colaborador da lista
-} Collaborators_List_t;
+    struct Collaborators_List_Element *prev_collaboratorsListElement;
+    struct Collaborators_List_Element *next_collaboratorsListElement;   // Ponteiro para a próxima struct da lista de colaborador com o ponteiro do próximo colaborador da lista
+} Collaborators_List_Element_t;
 
-typedef Collaborators_List_t *CollaboratorsList;
+typedef Collaborators_List_Element_t *CollaboratorsListElement;
 
 // Collaborator struct
 typedef struct Collaborator_Element
 {
     Name name;
     Email email;
-    Bio bio;
+    Description description;
 } Collaborator_Element_t;
 
 typedef Collaborator_Element_t *Collaborator;
 
-
 // Functions
 
-Project createProject(Title title, Description description, CollaboratorsList collaboratorsList);
+Project createProject(Title title, Description description);
 
-void showProjects();
+int showProjects();
 
-void showProjectDetails(Project project);
+int showProjectDetails(Project project);
 
-void showProjectCollaboratorsList(Project project);
+int showProjectCollaboratorsList(Project project);
 
-void showCollaboratorProfile(Project project, Name name);
+int showCollaboratorProfile(Project project, Name name);
 
-Collaborator createCollaborator(Name name, Email email, Bio bio);
+Collaborator createCollaboratorProfile(Name name, Email email, Description description);
 
-void pushProject(Project project);
+int editCollaboratorProfile(Project project, Name name);
 
-void deleteProject(Project project);
+int pushProject(Project project);
 
-void pushCollaborator(Project protect, Collaborator collaborator);
+int deleteProject(Project project);
 
-void deleteCollaborator(Project protect, Collaborator collaborator);
+int pushCollaborator(Project protect, Collaborator collaborator);
 
-Collaborator searchCollboratorByName(Name name);
+int deleteCollaborator(Project protect, Collaborator collaborator);
 
+Collaborator searchCollaboratorByName(Project project, Name name);
 
+int showProjectTasklist(Project project);
+
+int getNumbProjects();
 
 #endif

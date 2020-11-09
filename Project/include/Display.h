@@ -19,7 +19,6 @@ bool IS_RESIZED;
 
 int PREV_Y, PREV_X; 
 
-
 typedef struct PrintBannerArgs{
     int y;
     int x;
@@ -40,5 +39,7 @@ int infoWin(char* text, int y, int x, unsigned int width, unsigned int height);
 int main_menu(int* err);
 
 int loop(int* err);
+
+int showProjectScreen();
 
 #endif 
