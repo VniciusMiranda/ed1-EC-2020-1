@@ -11,7 +11,6 @@ void init(){
 	cbreak();
 	curs_set(0);
 
-
 	start_color();
 	init_colors();
 }
