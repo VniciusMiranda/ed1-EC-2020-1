@@ -7,8 +7,8 @@
 void init(){
 
 	initscr();
-	cbreak();
 	noecho();
+	cbreak();
 	curs_set(0);
 
 	start_color();
@@ -20,12 +20,15 @@ int main(){
 
 	init();
 
-	int status, location = loop(&status);	
+
+	int status;
+	int  location = projectOrganizer(&status);	
 
 	endwin();
+
 	if(status != OK)
 	{
-		printf("an statusor has occured.\n");
+		printf("an error has occured.\n");
 		printf("status code: %d\n", status);
 		printf("location: %d\n", location);
 		printf(":/\n");
@@ -33,7 +36,9 @@ int main(){
 	}
 	else if(DEBUG)
 	{
-
+		printf("status code: %d\n", status);
+		printf("location: %d\n", location);
+		printf(":/\n");
 	}
 
 	printf("bye :)\n");

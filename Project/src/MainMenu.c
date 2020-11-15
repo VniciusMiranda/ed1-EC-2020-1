@@ -30,6 +30,7 @@ int main_menu(int *err){
 		"sair :c"
 	};
 
+
 	char* question = "Bem-Vindo ao Project Organizer";
 	int num_options = sizeof(options)/sizeof(char*);
 
@@ -38,6 +39,7 @@ int main_menu(int *err){
 	stop = TRUE;
 
     pthread_join(banner_th, NULL);
+
 
     return choice;
 }

@@ -87,6 +87,24 @@ void* printBanner(void* args){
 }
 
 
+int eraseWin(WINDOW* w, int height, int width){
+    if(!w)
+        return ERR;
+
+    // erase what's inside the window
+    for(int i = 0; i < height; i ++)
+
+        for( int j = 0; j < width; j++)
+            mvwprintw(w, i, j, " ");
+
+     wrefresh(w); 
+    delwin(w);
+
+
+    return OK;
+}
+
+
 
 
 int selectWin(char** options, char* question, int num_options, int y, int x, unsigned int width, unsigned int height,  int default_choice){
@@ -102,7 +120,7 @@ int selectWin(char** options, char* question, int num_options, int y, int x, uns
     else
     {
         select_width  = width;
-        select_height = height;
+        select_height = height + 4;
     }
 
     // define the location considering the size of the win
@@ -134,6 +152,7 @@ int selectWin(char** options, char* question, int num_options, int y, int x, uns
 
     while(!exit)
     {
+        // print the options
         for(int i = 0; i < num_options; i++)
         {
             if(i == selected_option)
@@ -142,10 +161,12 @@ int selectWin(char** options, char* question, int num_options, int y, int x, uns
             mvwprintw(select_win, 2 + i, select_middle_x, options[i]);
             wattroff(select_win, A_REVERSE);
         } 
+
         wrefresh(select_win);
-
+        
         int key = wgetch(select_win);
-
+        
+        // manage key input 
         switch(key)
         {
             case KEY_UP: // key up
@@ -170,9 +191,9 @@ int selectWin(char** options, char* question, int num_options, int y, int x, uns
 
     delwin(select_win);
 
+    refresh();
     return selected_option;
 }
-
 
 
 
@@ -228,21 +249,32 @@ int inputWin( char* question, int y, int x, unsigned int width, unsigned int hei
 
 
 // main display loop
-int loop(int* status){
+int projectOrganizer(int* status){
     bool exit = FALSE;
 
 	int main_menu_option = main_menu(status);
-
-
+    
 	while(!exit)
 	{
 		switch(main_menu_option){
-			case 4:
-				exit = TRUE;
-				break;
-			default:
-				status = ERR;
-				exit = TRUE;
+            case 0:
+                // create project
+                break;
+            case 1:
+                // load project
+                break;
+            case 2:
+                // show project
+                break;
+            case 3:
+                // help 
+                break;
+            case 4:
+                // exit
+                exit = TRUE;
+                break;
 		}
     }
+
+    return main_menu_option;
 };

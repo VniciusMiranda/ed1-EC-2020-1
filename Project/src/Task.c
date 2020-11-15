@@ -98,8 +98,8 @@ int moveTask(Task_t* t, int y, int x, bool select){
 
 
 int show(Task_t* t, unsigned int y, unsigned x, bool selected){
-    if(!t) return ERR; 
 
+    if(!t) return ERR; 
     if(!t->win || IS_RESIZED) t->win = newwin(TASK_DISPLAY_HEIGHT, TASK_DISPLAY_WIDTH, y, x);    
 
     refresh();
@@ -156,18 +156,8 @@ int show(Task_t* t, unsigned int y, unsigned x, bool selected){
 int hide(Task_t* t){
     if(!t || !isDisplayed(t)) return ERR; 
 
-    // erase what's inside the window
-    for(int i = 0; i < TASK_DISPLAY_HEIGHT; i ++)
+    eraseWin(t->win, TASK_DISPLAY_HEIGHT, TASK_DISPLAY_WIDTH);
 
-        for( int j = 0; j < TASK_DISPLAY_WIDTH; j++)
-
-            mvwprintw(t->win, i, j, " ");
-
-    // Erase frame around the window
-    wborder(t->win, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '); 
-
-    wrefresh(t->win); 
-    delwin(t->win);
     t->win = NULL;
 }
 
