@@ -277,7 +277,7 @@ int showProjectScreen()
     getmaxyx(stdscr, max_y, max_x);
 
     // Create the top window
-    WINDOW top_win = newwin((max_y / 2 - 2), max_x - 2, 1, 1);
+    WINDOW* top_win = newwin((max_y / 2 - 2), max_x - 2, 1, 1);
     refresh();
     box(top_win, 0, 0);
     wprintw(top_win, "Projetos");
@@ -285,23 +285,24 @@ int showProjectScreen()
     wrefresh(top_win);
 
     // Create the bottom window
-    WINDOW bot_win = newwin((max_y / 2 - 2), max_x - 2, (max_y / 2) + 1, 1);
+    WINDOW* bot_win = newwin((max_y / 2 - 2), max_x - 2, (max_y / 2) + 1, 1);
     refresh();
     box(bot_win, 0, 0);
     wrefresh(bot_win);
 
     // Create the half-screen windows
-    WINDOW botL_win = newwin((max_y / 2 - 2), (max_x / 2) - 1, (max_y / 2) + 1, 1);
+    WINDOW* botL_win = newwin((max_y / 2 - 2), (max_x / 2) - 1, (max_y / 2) + 1, 1);
     refresh();
     box(botL_win, 0, 0);
     wrefresh(botL_win);
 
-    WINDOW botR_win = newwin((max_y / 2 - 2), (max_x - 2) - 1, (max_y / 2) + 1, max_x / 2);
+    WINDOW* botR_win = newwin((max_y / 2 - 2), (max_x - 2) - 1, (max_y / 2) + 1, max_x / 2);
     refresh();
     box(botR_win, 0, 0);
     wrefresh(botR_win);
 
-    char *options[];
+    char *options[] = { "Voltar" };
+
     char *question;
     int num_options;
     int title_width;
@@ -311,7 +312,6 @@ int showProjectScreen()
     if (process == -1)
     {
         // creating select menu
-        options[] = { "Voltar" };
         question = "Não existem projetos.";
         num_options = sizeof(options) / sizeof(char *);
         title_width = (strlen(question) + 10)/2;
@@ -330,7 +330,6 @@ int showProjectScreen()
         choice = selectWin(options, question, num_options, max_y * 5 / 8, max_x / 4 - title_width, 0, 0, 0);
     }
 
-    wrefresh(win);
 
     return OK;
 }

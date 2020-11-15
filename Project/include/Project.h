@@ -1,8 +1,22 @@
 #ifndef __PROJECT_H__
 #define __PROJECT_H__
 
-#include "projectOrganizer.h"
 #include <ncurses.h>
+
+// movi as definições em project organizer para cá
+//estava havendo conflito entre os tipos com os outros
+// tipos abstratos :p
+#define TITLE_SIZE 256
+#define DESCRIPTION_SIZE 1024
+#define NAME_SIZE 64
+#define EMAIL_SIZE 64
+
+// char* com os tamanhos específicos de title e description
+typedef char Description[DESCRIPTION_SIZE];
+typedef char Title[TITLE_SIZE]; 
+typedef char Name[NAME_SIZE]; 
+typedef char Email[EMAIL_SIZE]; 
+
 
 // Project List struct
 typedef struct Project_List_Element

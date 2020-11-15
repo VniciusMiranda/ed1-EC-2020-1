@@ -22,7 +22,7 @@ int main(){
 
 
 	int status;
-	int  location = projectOrganizer(&status);	
+	int  location = loop(&status);	
 
 	endwin();
 

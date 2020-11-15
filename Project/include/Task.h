@@ -2,8 +2,6 @@
 #define __TASK_H__
 
 
-#include "ProjectOrganizer.h"
-
 #include "Label.h"
 #include "Display.h"
 
@@ -14,14 +12,17 @@
 #define TASK_DISPLAY_WIDTH 25 
 #define TASK_DISPLAY_HEIGHT 6
 
-typedef char Title[TASK_DISPLAY_WIDTH];
+#define TASK_TITLE_SIZE TASK_DISPLAY_WIDTH
+#define TASK_DESCRIPTION_SIZE TASK_DISPLAY_WIDTH*10
+
+typedef char Title[TASK_TITLE_SIZE];
+typedef char Description[TASK_DESCRIPTION_SIZE];
 
 typedef struct Task{
 
     Title title;
     Description description;
     bool available_colors[NUMB_COLORS];
-
 
     Label_t* labels[LABELS_MAX];
     int numb_labels;

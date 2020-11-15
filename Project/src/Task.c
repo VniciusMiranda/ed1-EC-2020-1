@@ -173,7 +173,7 @@ bool isDisplayed(Task_t* t){
 
 
 int setDescription(Task_t* t, char* d){
-    if(!t || strlen(d) >= DESCRIPTION_SIZE) return ERR;
+    if(!t || strlen(d) >= TASK_DESCRIPTION_SIZE) return ERR;
 
     strcpy(t->description, d);
 
@@ -204,7 +204,3 @@ char* getDescription(Task_t* t){
 char* getTitle(Task_t* t){
     return !t ? (char* ) ERR : t->title;
 }
-
-
-
-

@@ -2,17 +2,18 @@
 
 #define __TASK_LIST_H__ 
 
-#include "ProjectOrganizer.h"
 
 #include "Task.h"
 
 
-typedef struct Element{ 
+typedef struct ElementTask{ 
+
     Task_t task;
     struct Element* next;
-} Element_t;
 
-typedef Element_t* TaskList_t; 
+} ElementTask_t;
+
+typedef ElementTask_t* TaskList_t; 
 
 
 #endif
