@@ -1,25 +1,28 @@
+
 # project directories
-IDIR = include
-SDIR = src
-ODIR = obj
+IDIR := include/
+SDIR := src
+ODIR := obj
 
 # compiler specs
-CC = gcc
-CFLAGS = -I $(IDIR) 
+CC     := gcc
+CFLAGS := -I $(IDIR) 
 
 # executable name
-EXECUTABLE = executable/project-organizer
+EXECUTABLE := executable/project-organizer
 
 # libraries
-LIBS = -lncurses
+LIBS := -lncurses -lpthread 
 
 # remember to include "Project.h" again
-_DEPS= Label.h Task.h TaskList.h ProjectOrganizer.h Display.h
-DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
+
+_DEPS := Label.h Task.h TaskList.h ProjectOrganizer.h Display.h  
+DEPS  := $(patsubst %,$(IDIR)/%,$(_DEPS))
 
 # remember to include "Project.o" again
-_OBJ = Label.o main.o Task.o TaskList.o ProjectOrganizer.o Display.o 
-OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
+_OBJ := Label.o main.o Task.o TaskList.o ProjectOrganizer.o Display.o MainMenu.o 
+OBJ  := $(patsubst %,$(ODIR)/%,$(_OBJ))
+>>>>>>> feature/#5-criar-display
 
 
 $(ODIR)/%.o: $(SDIR)/%.c $(DEPS)

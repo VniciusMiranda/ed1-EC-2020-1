@@ -5,6 +5,7 @@
 #include "ProjectOrganizer.h"
 
 #include "Label.h"
+#include "Display.h"
 
 
 #define LABELS_MAX 4 

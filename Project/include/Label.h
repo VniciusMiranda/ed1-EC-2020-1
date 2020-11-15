@@ -1,16 +1,13 @@
 #ifndef __LABEL_H__
 #define __LABEL_H__ 
 
-#include "ProjectOrganizer.h"
+#include "Display.h"
 
 #define LABEL_NAME_SIZE 20
-#define NUMB_COLORS 8
 
 typedef char LabelName[LABEL_NAME_SIZE];
 
 typedef unsigned int Color;
-
-int INIT_PAIRS[NUMB_COLORS];
 
 
 typedef struct Label{ 
@@ -19,10 +16,6 @@ typedef struct Label{
 
 } Label_t;
 
-
-/* inicializa o que é necessário para a 
-utilização de labels no projeto */
-int initLabels();
 
 Label_t* createLabel(Color color, LabelName name);
 

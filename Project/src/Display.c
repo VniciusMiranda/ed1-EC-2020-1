@@ -1,8 +1,14 @@
 #include "Display.h"
 
 
-void printBanner(int y, int x){
 
+void init_colors(){
+
+    for(int i = 0; i < NUMB_COLORS; i++)
+            INIT_PAIRS[i] = FALSE;
+} 
+
+void* printBanner(void* args){
 
     char* banner_lines[] = { 
 
@@ -31,98 +37,244 @@ void printBanner(int y, int x){
         "                     `Y88P`                                                 "
 
     };
-    init_pair(BANNER_COLOR, COLOR_CYAN, COLOR_BLACK); 
 
-    x -= strlen(banner_lines[0]); 
+    int banner_size = sizeof(banner_lines)/sizeof(char*);
+    int banner_width = strlen(banner_lines[11]);
+    int banner_height = banner_size;
 
-    attron(COLOR_PAIR(BANNER_COLOR));
 
-    for(int i = 0; i < 22; i++)
-        mvprintw(y++, x,"%s", banner_lines[i]);
+    PrintBannerArgs* pb = (PrintBannerArgs*) args;
 
-    attroff(COLOR_PAIR(BANNER_COLOR));
-        
+    bool* stop = pb->stop;
+    int y = pb->y, x = pb->x; 
+
+
+    int begin_y = y;
+
+    int color_id, start_color = COLOR_BLUE; 
+
+    int start_color_id = start_color + 8, color_update = start_color_id; 
+    int max_color_id = 16;
+
+    // the pairs will be init with  8 =< ID < 16
+    // so that it doesn't conflit with the pairs used on labels 
+    for(int i = start_color; i < 8; i++)
+            init_pair(i + 8, i, COLOR_BLACK);
+
+
+    while(TRUE)
+    {
+
+        if(*stop) break;
+
+        noecho();
+        color_id = color_update;
+        y = begin_y;
+
+        for(int i = 0; i < banner_size; i++)
+        {
+            attron(COLOR_PAIR(color_id));
+            mvprintw(y++, x,"%s", banner_lines[i]);
+            attroff(COLOR_PAIR(color_id));
+
+            color_id = color_id < max_color_id ? color_id + 1 : start_color_id;
+        }
+
+        color_update = color_update < max_color_id ? color_update + 1 : start_color_id;
+        usleep(100000);
+        refresh();
+    }
 }
 
 
-int selectWin(char** options, char* question, int num_options, int y, int x, unsigned int width,unsigned int height,  int default_choice){
+int eraseWin(WINDOW* w, int height, int width){
+    if(!w)
+        return ERR;
 
-    int menu_width;
-    int menu_height;
+    // erase what's inside the window
+    for(int i = 0; i < height; i ++)
+
+        for( int j = 0; j < width; j++)
+            mvwprintw(w, i, j, " ");
+
+     wrefresh(w); 
+    delwin(w);
+
+
+    return OK;
+}
+
+
+
+
+int selectWin(char** options, char* question, int num_options, int y, int x, unsigned int width, unsigned int height,  int default_choice){
+
+    int select_width;
+    int select_height;
 
     if(!width || !height) 
     {
-        menu_width = strlen(question) + 10;
-        menu_height = num_options + 4;
+        select_width = strlen(question) + 10;
+        select_height = num_options + 4;
     }
     else
     {
-        menu_width  = width;
-        menu_height = height;
+        select_width  = width;
+        select_height = height + 4;
     }
 
     // define the location considering the size of the win
-    int menu_x = x - menu_width;
-    int menu_y = y - menu_height;
+    int select_x = x;
+    int select_y = y;
 
-    menu_x = menu_x < 0 ? 0 : menu_x;
-    menu_y = menu_y < 0 ? 0 : menu_y;
+    select_x = select_x < 0 ? 0 : select_x;
+    select_y = select_y < 0 ? 0 : select_y;
 
-    WINDOW* menu_win = newwin(menu_height, menu_width, menu_y , menu_x); 
+    WINDOW* select_win = newwin(select_height, select_width, select_y , select_x); 
 
-    box(menu_win, 0, 0);
+    box(select_win, 0, 0);
 
     int question_length = strlen(question);
 
-    mvwprintw(menu_win, 0, (menu_width - question_length)/2, question);
+    int select_middle_x = select_width/( 2 * DIS_CONV_FACTOR);
+    int select_middle_y = select_height/( 2 * DIS_CONV_FACTOR); 
 
-    keypad(menu_win, TRUE );
+
+    mvwprintw(select_win, 0, select_middle_x, question);
+
+    keypad(select_win, TRUE);
 
     refresh();
 
-    int selected = default_choice;
-    bool bye = FALSE; 
+    bool exit = FALSE; 
 
-    while(!bye)
+    int selected_option = default_choice;
+
+    while(!exit)
     {
+        // print the options
         for(int i = 0; i < num_options; i++)
         {
-            if(i == selected)
-                wattron(menu_win, A_REVERSE); 
+            if(i == selected_option)
+                wattron(select_win, A_REVERSE); 
 
-            mvwprintw(menu_win, 2 + i, 1, options[i]);
-            wattroff(menu_win, A_REVERSE);
+            mvwprintw(select_win, 2 + i, select_middle_x, options[i]);
+            wattroff(select_win, A_REVERSE);
         } 
-        wrefresh(menu_win);
 
-        int choice = getch();
-
-        switch(choice)
+        wrefresh(select_win);
+        
+        int key = wgetch(select_win);
+        
+        // manage key input 
+        switch(key)
         {
-            case 65: // key up
-                selected--;
+            case KEY_UP: // key up
+                selected_option--;
                 break;
-            case 66: // key down
-                selected++;
+            case KEY_DOWN: // key down
+                selected_option++;
                 break;
             case 10: // enter
-                bye = TRUE;
+                exit = TRUE;
                 break;
         }
 
-        if(selected < 0)
-            selected = num_options - 1;
+        if(selected_option < 0)
+            selected_option = num_options - 1;
 
-        if(selected > num_options - 1)
-            selected = 0;
+        if(selected_option > num_options - 1)
+            selected_option = 0;
 
-        wrefresh(menu_win);
+        wrefresh(select_win);
     }
 
-    delwin(menu_win);
+    delwin(select_win);
 
-    return selected;
+    refresh();
+    return selected_option;
+}
 
 
+
+int inputWin( char* question, int y, int x, unsigned int width, unsigned int height, char* answer){
+
+    if(!answer) return ERR;
+
+    echo();
+    curs_set(1);
+
+    WINDOW* input_win = newwin(width, height, y , x);
+    if(!input_win) return ERR;
+
+
+    // conversion of scr_width to char_length
+    width *= DIS_CONV_FACTOR;
+
+    char str[width];
+
+
+    box(input_win, 0, 0);
+
+    wattron(input_win, A_REVERSE);
+    mvwprintw(input_win, 0, (width - strlen(question))/2, "%s", question);
+    wattroff(input_win, A_REVERSE);
+
+    refresh();
+    wrefresh(input_win);
+
+    keypad(input_win, TRUE);
+
+    char c;
+    int i = 0;
+
+    wmove(input_win, 1,1);
+
+    while(c != 10 && i < width)
+    {
+        c = wgetch(input_win);
+        str[i++] = c;
+    }
+
+    delwin(input_win);
+
+    noecho();
+    curs_set(0);
+
+    strcpy(answer, str); 
+
+    return OK;
 
 }
+
+
+// main display loop
+int projectOrganizer(int* status){
+    bool exit = FALSE;
+
+	int main_menu_option = main_menu(status);
+    
+	while(!exit)
+	{
+		switch(main_menu_option){
+            case 0:
+                // create project
+                break;
+            case 1:
+                // load project
+                break;
+            case 2:
+                // show project
+                break;
+            case 3:
+                // help 
+                break;
+            case 4:
+                // exit
+                exit = TRUE;
+                break;
+		}
+    }
+
+    return main_menu_option;
+};

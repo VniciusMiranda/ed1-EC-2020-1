@@ -1,14 +1,6 @@
 #include "Label.h"
 
 
-int initLabels(){
-    for(int i = 0; i < NUMB_COLORS; i++)
-        INIT_PAIRS[i] = False;
-    
-    return OK;
-}
-
-
 Label_t* createLabel(Color color, LabelName name){
 
     if(color >= NUMB_COLORS || strlen(name) > LABEL_NAME_SIZE)
@@ -18,6 +10,10 @@ Label_t* createLabel(Color color, LabelName name){
     Label_t* new_label = (Label_t*) malloc(sizeof(Label_t));
 
     if(!new_label) return NULL;
+
+
+    if(!INIT_PAIRS[color])
+        init_pair(color, color, COLOR_BLACK);
 
 
     setColor(new_label, color);
@@ -31,7 +27,7 @@ Label_t* createLabel(Color color, LabelName name){
 
 
 int deleteLabel(Label_t* l){
-    if(!l) return ERROR;
+    if(!l) return ERR;
 
     free(l);
     return OK;
@@ -45,7 +41,7 @@ int deleteLabel(Label_t* l){
 
 
 int setColor(Label_t* l, Color c){
-    if(c >= NUMB_COLORS) return ERROR;
+    if(c >= NUMB_COLORS) return ERR;
 
         l->color = c;
         return OK;
@@ -55,7 +51,7 @@ int setColor(Label_t* l, Color c){
 
 
 int setLabelName(Label_t* l, LabelName name){
-    if(strlen(name) > LABEL_NAME_SIZE) return ERROR;
+    if(strlen(name) > LABEL_NAME_SIZE) return ERR;
 
         strcpy(l->name, name);
         return OK;
@@ -67,7 +63,7 @@ int setLabelName(Label_t* l, LabelName name){
 // _______gettters________
 
 Color getColor(Label_t* l){
-    return l ? l->color : (Color) ERROR;
+    return l ? l->color : (Color) ERR;
 }
 
 
@@ -75,7 +71,7 @@ Color getColor(Label_t* l){
 
 char* getLabelName(Label_t* l){
 
-    return l ? l->name :  (char*) ERROR;
+    return l ? l->name :  (char*) ERR;
 
 }
 

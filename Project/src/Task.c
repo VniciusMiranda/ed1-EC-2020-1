@@ -1,6 +1,5 @@
 #include "Task.h"
 
-
 /* 
     Allocates memory for the new task 
     being created and init default values 
@@ -27,7 +26,7 @@ Task_t* createTask(char* title, char* description){
     
 
     for(int i = 0; i < NUMB_COLORS; i++)
-        new_task->available_colors[i] = True;
+        new_task->available_colors[i] = TRUE;
 
     new_task->win = NULL;
 
@@ -39,7 +38,7 @@ Task_t* createTask(char* title, char* description){
 
 
 int deleteTask(Task_t* t){
-    if(!t) return ERROR;
+    if(!t) return ERR;
 
     if(isDisplayed(t)) hide(t);
   
@@ -52,9 +51,9 @@ int deleteTask(Task_t* t){
 
 int addLabel(Task_t* t, Label_t* label){
     if(!t || !label || t->numb_labels >= LABELS_MAX || !t->available_colors[label->color]) 
-        return ERROR;
+        return ERR;
 
-    t->available_colors[label->color] = False;
+    t->available_colors[label->color] = FALSE;
     t->labels[t->numb_labels++] = label;
 }
 
@@ -81,14 +80,15 @@ int removeLabel(Task_t* t, LabelName label_name){
         
     }
 
-    return ERROR;
+    return ERR;
 
 }
 
 
+
 int moveTask(Task_t* t, int y, int x, bool select){
     if(!t || !isDisplayed(t))
-        return ERROR;
+        return ERR;
 
     hide(t); 
     show(t, y, x, select);
@@ -98,25 +98,22 @@ int moveTask(Task_t* t, int y, int x, bool select){
 
 
 int show(Task_t* t, unsigned int y, unsigned x, bool selected){
-    if(!t) return ERROR; 
 
+    if(!t) return ERR; 
     if(!t->win || IS_RESIZED) t->win = newwin(TASK_DISPLAY_HEIGHT, TASK_DISPLAY_WIDTH, y, x);    
-
 
     refresh();
 
-    box(t->win, 0, 0);
+    box(t->win, 0, 0); // desenha a borda da janela
 
     int title_len = strlen(t->title);
 
-    // move to the center up of the component
-    wmove(t->win, 0, (TASK_DISPLAY_WIDTH - title_len)/2);
 
-    // print the title
+    // move to the center up of the component and print the title
     if(selected)
-        wattron(t->win, A_REVERSE);
+       wattron(t->win, A_REVERSE);
 
-    wprintw(t->win, "%s", t->title);
+    mvwprintw(t->win, 0, (TASK_DISPLAY_WIDTH - title_len)/2, "%s", t->title);
     wattroff(t->win, A_REVERSE);
 
 
@@ -129,19 +126,22 @@ int show(Task_t* t, unsigned int y, unsigned x, bool selected){
 
             wmove(t->win, 1 + i, 1);
 
+
             // if the color pair has already beeing init and it is init again
             // it causes a segmentation fault (core dumped) error
             if(!INIT_PAIRS[label_color])
             {
                 init_pair(label_color, COLOR_BLACK, label_color);
-                INIT_PAIRS[label_color] = True;
+                INIT_PAIRS[label_color] = TRUE;
             }
+
 
             // toggles the color attribute 
             wattron(t->win, COLOR_PAIR(label_color));
             wprintw(t->win, "%s",t->labels[i]->name);
             wattroff(t->win, COLOR_PAIR(label_color));
         }
+
 
         // in case there are more labels but not enough space we display "..."
         if(t->numb_labels >= TASK_DISPLAY_HEIGHT - 2)
@@ -154,20 +154,10 @@ int show(Task_t* t, unsigned int y, unsigned x, bool selected){
 
 
 int hide(Task_t* t){
-    if(!t || !isDisplayed(t)) return ERROR; 
+    if(!t || !isDisplayed(t)) return ERR; 
 
-    // erase what's inside the window
-    for(int i = 0; i < TASK_DISPLAY_HEIGHT; i ++)
+    eraseWin(t->win, TASK_DISPLAY_HEIGHT, TASK_DISPLAY_WIDTH);
 
-        for( int j = 0; j < TASK_DISPLAY_WIDTH; j++)
-
-            mvwprintw(t->win, i, j, " ");
-
-    // Erase frame around the window
-    wborder(t->win, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '); 
-
-    wrefresh(t->win); 
-    delwin(t->win);
     t->win = NULL;
 }
 
@@ -176,14 +166,14 @@ int hide(Task_t* t){
 
 
 bool isDisplayed(Task_t* t){
-    return t->win ? True : False;
+    return t->win ? TRUE : FALSE;
 }
 
 
 
 
 int setDescription(Task_t* t, char* d){
-    if(!t || strlen(d) >= DESCRIPTION_SIZE) return ERROR;
+    if(!t || strlen(d) >= DESCRIPTION_SIZE) return ERR;
 
     strcpy(t->description, d);
 
@@ -194,7 +184,7 @@ int setDescription(Task_t* t, char* d){
 
 
 int setTitle(Task_t* t, char* title){
-    if(!t || strlen(title) >= TASK_DISPLAY_WIDTH) return ERROR;
+    if(!t || strlen(title) >= TASK_DISPLAY_WIDTH) return ERR;
 
     strcpy(t->title, title);
 
@@ -205,14 +195,14 @@ int setTitle(Task_t* t, char* title){
 
 
 char* getDescription(Task_t* t){
-    return !t ? (char*) ERROR : t->description;
+    return !t ? (char*) ERR : t->description;
 }
 
 
 
 
 char* getTitle(Task_t* t){
-    return !t ? (char* ) ERROR : t->title;
+    return !t ? (char* ) ERR : t->title;
 }
 
 
