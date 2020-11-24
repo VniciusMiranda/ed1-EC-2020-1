@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "Project.h"
 
 #define PROJECT_DISPLAY_WIDTH 25
@@ -29,7 +30,7 @@ Project createProject(Title title, Description description)
 }
 
 //OK
-int showProjects(WINDOW w)
+int showProjects(WINDOW *w)
 {
     ProjectListElement actual = firstProject;
     int title_len;
@@ -44,7 +45,7 @@ int showProjects(WINDOW w)
         actual->win = newwin(PROJECT_DISPLAY_HEIGHT, PROJECT_DISPLAY_WIDTH, 4, lastWidth + 1);
         refresh();
         box(actual->win, 0, 0);
-        mvwprintw(actual->w, (PROJECT_DISPLAY_HEIGHT - 2) / 2, (PROJECT_DISPLAY_WIDTH - title_len) / 2, "%s", actual->project->title);
+        mvwprintw(actual->win, (PROJECT_DISPLAY_HEIGHT - 2) / 2, (PROJECT_DISPLAY_WIDTH - title_len) / 2, "%s", actual->project->title);
         wrefresh(actual->win);
         actual = actual->next_project;
         lastWidth += (PROJECT_DISPLAY_WIDTH + 1);
