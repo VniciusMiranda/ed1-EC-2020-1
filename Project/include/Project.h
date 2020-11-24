@@ -23,7 +23,7 @@ typedef struct Project_List_Element
 {
     int id;
     WINDOW *win;
-    struct Project project;
+    struct Project_Element_t *project;
     struct Project_List_Element *next_project;
 } Project_List_Element_t;
 
@@ -34,9 +34,9 @@ ProjectListElement firstProject = NULL;
 // Project struct
 typedef struct Project_Element
 {
-    Title title;
-    Description description;
-    struct CollaboratorsListElement collaboratorsListElement; // Ponteiro para o primeiro elemento da lista de colaboradores
+    char *title;
+    char *description;
+    struct Collaborators_List_Element_t *collaboratorsListElement; // Ponteiro para o primeiro elemento da lista de colaboradores
 } Project_Element_t;
 
 typedef Project_Element_t *Project;
@@ -45,7 +45,7 @@ typedef Project_Element_t *Project;
 typedef struct Collaborators_List_Element
 {
     int id;
-    struct Collaborator collaborator;  // Perfil do colaborador
+    struct Collaborator_Element_t *collaborator;  // Perfil do colaborador
     struct Collaborators_List_Element *prev_collaboratorsListElement;
     struct Collaborators_List_Element *next_collaboratorsListElement;   // Ponteiro para a próxima struct da lista de colaborador com o ponteiro do próximo colaborador da lista
 } Collaborators_List_Element_t;
