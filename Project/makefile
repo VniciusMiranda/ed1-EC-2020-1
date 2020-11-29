@@ -14,10 +14,10 @@ EXECUTABLE := executable/project-organizer
 # libraries
 LIBS := -lncurses -lpthread 
 
-_DEPS := Label.h Task.h TaskList.h Display.h Project.h
+_DEPS := Label.h Task.h TaskList.h Display.h 
 DEPS  := $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ := Label.o main.o  Task.o TaskList.o Display.o MainMenu.o Project.o 
+_OBJ := Label.o main.o  Task.o TaskList.o Display.o MainMenu.o 
 OBJ  := $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 
