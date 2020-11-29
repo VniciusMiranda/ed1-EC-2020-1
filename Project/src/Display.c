@@ -239,29 +239,5 @@ int inputWin( char* question, int y, int x, unsigned int width, unsigned int hei
     return OK;
 }
 
-// main display loop
-int loop(int *status)
-{
-    bool exit = FALSE;
 
-    int main_menu_option = main_menu(status);
-
-    while (!exit)
-    {
-        switch (main_menu_option)
-        {
-        case 2:
-            exit = TRUE;
-            break;
-        case 4:
-            exit = TRUE;
-            break;
-        default:
-            status = ERR;
-            exit = TRUE;
-        }
-    }
-
-    return main_menu_option;
-};
 
