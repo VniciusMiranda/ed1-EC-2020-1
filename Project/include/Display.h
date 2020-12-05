@@ -14,7 +14,7 @@
 
 pthread_t banner_th;
 
-int INIT_PAIRS[NUMB_COLORS];
+bool INIT_PAIRS[NUMB_COLORS];
 bool IS_RESIZED;
 
 int PREV_Y, PREV_X; 
@@ -25,8 +25,15 @@ typedef struct PrintBannerArgs{
     bool* stop;
 } PrintBannerArgs;
 
+typedef unsigned int Color;
 
-void init_colors();
+void initColors();
+
+void initColorsIds();
+
+void initColor(Color color);
+
+bool isColorInit(Color color);
 
 /* this function runs as a thread, so the args need to be passed this way */
 void* printBanner(void* args);
@@ -39,10 +46,12 @@ int infoWin(char* text, int y, int x, unsigned int width, unsigned int height);
 
 int eraseWin(WINDOW* w, int height, int width);
 
-int main_menu(int* err);
+void printWithColor(WINDOW* win, Color color, char* str);
 
-int app(int* err);
+void printWithAttribute(WINDOW* win, int attr, char* str);
 
-int showProjectScreen();
+int mainMenu(int* err);
+
+int projectScreen();
 
 #endif 

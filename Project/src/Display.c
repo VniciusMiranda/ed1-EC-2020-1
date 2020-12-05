@@ -1,13 +1,27 @@
 #include "Display.h"
 
-void init_colors()
-{
+
+static void _printUnhandledColor(WINDOW* win, Color color, char* str);
+
+
+void initColors() {
     for (int i = 0; i < NUMB_COLORS; i++)
         INIT_PAIRS[i] = FALSE;
 }
 
-void *printBanner(void *args)
-{
+
+void initColor(Color color) {
+    init_pair(color, COLOR_BLACK, color);
+    INIT_PAIRS[color] = TRUE;
+}
+
+
+bool isColorInit(Color color) {
+    return INIT_PAIRS[color];
+}
+
+
+void *printBanner(void *args) {
 
     char *banner_lines[] = {
 
@@ -43,37 +57,28 @@ void *printBanner(void *args)
 
     PrintBannerArgs *pb = (PrintBannerArgs *)args;
 
-    bool *stop = pb->stop;
+    bool *stopBannerAnimation = pb->stop;
     int y = pb->y, x = pb->x;
 
+    // I'm not proud of this part of the code, but it works. Later I'll make it better  
     int begin_y = y;
-
     int color_id, start_color = COLOR_BLUE;
 
     int start_color_id = start_color + 8, color_update = start_color_id;
     int max_color_id = 16;
 
-    // the pairs will be init with  8 =< ID < 16
-    // so that it doesn't conflit with the pairs used on labels
-    for (int i = start_color; i < 8; i++)
-        init_pair(i + 8, i, COLOR_BLACK);
+    for (int i = start_color; i < 8; i++) init_pair(i + 8, i, COLOR_BLACK);
 
-    while (TRUE)
+    while (*stopBannerAnimation != TRUE)
     {
-
-        if (*stop)
-            break;
-
         noecho();
         color_id = color_update;
         y = begin_y;
 
         for (int i = 0; i < banner_size; i++)
         {
-            attron(COLOR_PAIR(color_id));
-            mvprintw(y++, x, "%s", banner_lines[i]);
-            attroff(COLOR_PAIR(color_id));
-
+            move(y++, x);
+            _printUnhandledColor(stdscr, color_id, banner_lines[i]);
             color_id = color_id < max_color_id ? color_id + 1 : start_color_id;
         }
 
@@ -102,8 +107,6 @@ int eraseWin(WINDOW* w, int height, int width){
 }
 
 
-
-
 int selectWin(char** options, char* question, int num_options, int y, int x, unsigned int width, unsigned int height,  int default_choice){
 
     int select_width;
@@ -120,7 +123,6 @@ int selectWin(char** options, char* question, int num_options, int y, int x, uns
         select_height = height;
     }
 
-    // define the location considering the size of the win
     int select_x = x;
     int select_y = y;
 
@@ -148,7 +150,6 @@ int selectWin(char** options, char* question, int num_options, int y, int x, uns
 
     while (!exit)
     {
-        // print the options
         for(int i = 0; i < num_options; i++)
         {
             if (i == selected_option)
@@ -161,16 +162,15 @@ int selectWin(char** options, char* question, int num_options, int y, int x, uns
         
         int key = wgetch(select_win);
         
-        // manage key input 
         switch(key)
         {
-        case KEY_UP: // key up
+        case KEY_UP:
             selected_option--;
             break;
-        case KEY_DOWN: // key down
+        case KEY_DOWN:
             selected_option++;
             break;
-        case 10: // enter
+        case 10: 
             exit = TRUE;
             break;
         }
@@ -194,7 +194,6 @@ int inputWin( char* question, int y, int x, unsigned int width, unsigned int hei
 
     if(!answer) return ERR;
 
-
     echo();
     curs_set(1);
 
@@ -202,16 +201,14 @@ int inputWin( char* question, int y, int x, unsigned int width, unsigned int hei
     if (!input_win)
         return ERR;
 
-    // conversion of scr_width to char_length
     width *= DIS_CONV_FACTOR;
 
     char str[width];
 
     box(input_win, 0, 0);
 
-    wattron(input_win, A_REVERSE);
-    mvwprintw(input_win, 0, (width - strlen(question)) / 2, "%s", question);
-    wattroff(input_win, A_REVERSE);
+    move(0, (width - strlen(question)) / 2);
+    printWithAttribute(input_win, A_REVERSE, question);
 
     refresh();
     wrefresh(input_win);
@@ -240,4 +237,25 @@ int inputWin( char* question, int y, int x, unsigned int width, unsigned int hei
 }
 
 
+void printWithColor(WINDOW* win, Color color, char* str){
+    if(!isColorInit(color)) initColor(color);
+    
+    wattron(win, COLOR_PAIR(color));
+    wprintw(win, "%s", str);
+    wattroff(win, COLOR_PAIR(color));
+}
 
+
+void printWithAttribute(WINDOW* win, int attr, char* str){
+
+    wattron(win, attr);
+    wprintw(win, "%s", str);
+    wattroff(win, attr);
+}
+
+
+static void _printUnhandledColor(WINDOW* win, Color color, char* str) {
+    wattron(win, COLOR_PAIR(color));
+    wprintw(win, "%s", str);
+    wattroff(win, COLOR_PAIR(color));
+}

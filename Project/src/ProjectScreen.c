@@ -1,7 +1,7 @@
 #include "Display.h"
 
 
-int showProjectScreen()
+int projectScreen()
 {
     // Clear the screen
     clear();

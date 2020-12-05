@@ -3,24 +3,14 @@
 
 
 void init();
-
 void end();
-
 int run(int *status);
 
 
 int main(){
-
-	init();
+    int status;
 	run(&status);	
-	end();
-
 	return 0;
-}
-
-
-void end(){
-	endwin();
 }
 
 
@@ -32,15 +22,22 @@ void init(){
 	curs_set(0);
 
 	start_color();
-	init_colors();
+    initColors();
+}
+
+
+void end(){
+	endwin();
 }
 
 
 int run(int *status)
 {
+
+	init();
     bool exit = FALSE;
 
-    int main_menu_option = main_menu(status);
+    int main_menu_option = mainMenu(status);
 
     while (!exit)
     {
@@ -57,6 +54,7 @@ int run(int *status)
         }
     }
 
+	end();
     return OK;
 }
 
