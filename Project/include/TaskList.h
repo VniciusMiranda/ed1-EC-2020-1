@@ -5,15 +5,34 @@
 
 #include "Task.h"
 
+#define TASK_LIST_DISPLAY_WIDTH 20
+#define TASK_LIST_DISPLAY_HEIGHT 30
 
-typedef struct ElementTask{ 
+typedef struct TaskElement {
 
-    Task_t task;
-    struct Element* next;
+    Task_t* task;
+    struct TaskElement* next;
+    struct TaskElement* prev;
+} TaskElement_t;
 
-} ElementTask_t;
+typedef struct TaskList {
 
-typedef ElementTask_t* TaskList_t; 
+    int numbTasks;
+    TaskElement_t* head;
+
+    WINDOW* win;
+} TaskList_t;
+
+
+TaskList_t* createTaskList();
+
+int deleteTaskList(TaskList_t* taskList);
+
+Task_t* addTask(TaskList_t* taskList, Task_t* t);
+
+int deleteTaskElement(TaskList_t* taskList, Task_t* t);
+
+int deleteTaskElementByTitle(TaskList_t* taskList, Title title);
 
 
 #endif

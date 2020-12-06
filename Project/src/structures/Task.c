@@ -2,7 +2,7 @@
 
 static void _initAvailableColors(Task_t* t);
 
-static void _updateLabelArray(Task_t* t);
+static void _updateLabelArray(Task_t* t, int index);
 
 static void _initLabelArray(Task_t* t);
 
@@ -60,7 +60,7 @@ int removeLabel(Task_t* t, LabelName label_name){
             deleteLabel(t->labels[i]);
             t->labels[i] = NULL;
 
-            _updateLabelArray(t);
+            _updateLabelArray(t, i);
             t->numb_labels--;
 
             return OK; 
@@ -185,7 +185,7 @@ static void _initLabelArray(Task_t* t) {
 }
 
 
-static void _updateLabelArray(Task_t* t) {
-    for(int i = 0; i < LABELS_MAX - 1; i++)
+static void _updateLabelArray(Task_t* t, int index) {
+    for(int i = index; i < LABELS_MAX - 1; i++)
         t->labels[i] = t->labels[i + 1];
 }
