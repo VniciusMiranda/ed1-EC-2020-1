@@ -46,6 +46,9 @@ int main_menu(int* err);
 
 int loop(int* err);
 
-int showProjectScreen();
+void showProjectScreen();
+
+void createProjectScreen();
+
 
 #endif 
