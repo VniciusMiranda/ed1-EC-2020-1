@@ -1,9 +1,19 @@
 #include <ncurses.h>
 #include "Display.h"
 
-#define DEBUG TRUE
 
-// n curses config and project init functions
+void init();
+void end();
+int run(int *status);
+
+
+int main(){
+    int status;
+	run(&status);	
+	return 0;
+}
+
+
 void init(){
 
 	initscr();
@@ -12,37 +22,39 @@ void init(){
 	curs_set(0);
 
 	start_color();
-	init_colors();
+    initColors();
 }
 
 
-int main(){
+void end(){
+	endwin();
+}
+
+
+int run(int *status)
+{
 
 	init();
+    bool exit = FALSE;
 
+    int main_menu_option = mainMenu(status);
 
-	int status;
-	int  location = loop(&status);	
+    while (!exit)
+    {
+        switch (main_menu_option)
+        {
+        case 2:
+            exit = TRUE;
+            break;
+        case 4:
+            exit = TRUE;
+            break;
+        default:
+            exit = TRUE;
+        }
+    }
 
-	endwin();
-
-	if(status != OK)
-	{
-		printf("an error has occured.\n");
-		printf("status code: %d\n", status);
-		printf("location: %d\n", location);
-		printf(":/\n");
-		return -1;
-	}
-	else if(DEBUG)
-	{
-		printf("status code: %d\n", status);
-		printf("location: %d\n", location);
-		printf(":/\n");
-	}
-
-	printf("bye :)\n");
-
-
-	return 0;
+	end();
+    return OK;
 }
+

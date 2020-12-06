@@ -1,14 +1,27 @@
 #include "Display.h"
-#include "Project.h"
 
-void init_colors()
-{
+
+static void _printUnhandledColor(WINDOW* win, Color color, char* str);
+
+
+void initColors() {
     for (int i = 0; i < NUMB_COLORS; i++)
         INIT_PAIRS[i] = FALSE;
 }
 
-void *printBanner(void *args)
-{
+
+void initColor(Color color) {
+    init_pair(color, COLOR_BLACK, color);
+    INIT_PAIRS[color] = TRUE;
+}
+
+
+bool isColorInit(Color color) {
+    return INIT_PAIRS[color];
+}
+
+
+void *printBanner(void *args) {
 
     char *banner_lines[] = {
 
@@ -44,37 +57,28 @@ void *printBanner(void *args)
 
     PrintBannerArgs *pb = (PrintBannerArgs *)args;
 
-    bool *stop = pb->stop;
+    bool *stopBannerAnimation = pb->stop;
     int y = pb->y, x = pb->x;
 
+    // I'm not proud of this part of the code, but it works. Later I'll make it better  
     int begin_y = y;
-
     int color_id, start_color = COLOR_BLUE;
 
     int start_color_id = start_color + 8, color_update = start_color_id;
     int max_color_id = 16;
 
-    // the pairs will be init with  8 =< ID < 16
-    // so that it doesn't conflit with the pairs used on labels
-    for (int i = start_color; i < 8; i++)
-        init_pair(i + 8, i, COLOR_BLACK);
+    for (int i = start_color; i < 8; i++) init_pair(i + 8, i, COLOR_BLACK);
 
-    while (TRUE)
+    while (*stopBannerAnimation != TRUE)
     {
-
-        if (*stop)
-            break;
-
         noecho();
         color_id = color_update;
         y = begin_y;
 
         for (int i = 0; i < banner_size; i++)
         {
-            attron(COLOR_PAIR(color_id));
-            mvprintw(y++, x, "%s", banner_lines[i]);
-            attroff(COLOR_PAIR(color_id));
-
+            move(y++, x);
+            _printUnhandledColor(stdscr, color_id, banner_lines[i]);
             color_id = color_id < max_color_id ? color_id + 1 : start_color_id;
         }
 
@@ -103,8 +107,6 @@ int eraseWin(WINDOW* w, int height, int width){
 }
 
 
-
-
 int selectWin(char** options, char* question, int num_options, int y, int x, unsigned int width, unsigned int height,  int default_choice){
 
     int select_width;
@@ -121,7 +123,6 @@ int selectWin(char** options, char* question, int num_options, int y, int x, uns
         select_height = height;
     }
 
-    // define the location considering the size of the win
     int select_x = x;
     int select_y = y;
 
@@ -149,7 +150,6 @@ int selectWin(char** options, char* question, int num_options, int y, int x, uns
 
     while (!exit)
     {
-        // print the options
         for(int i = 0; i < num_options; i++)
         {
             if (i == selected_option)
@@ -162,16 +162,15 @@ int selectWin(char** options, char* question, int num_options, int y, int x, uns
         
         int key = wgetch(select_win);
         
-        // manage key input 
         switch(key)
         {
-        case KEY_UP: // key up
+        case KEY_UP:
             selected_option--;
             break;
-        case KEY_DOWN: // key down
+        case KEY_DOWN:
             selected_option++;
             break;
-        case 10: // enter
+        case 10: 
             exit = TRUE;
             break;
         }
@@ -195,7 +194,6 @@ int inputWin( char* question, int y, int x, unsigned int width, unsigned int hei
 
     if(!answer) return ERR;
 
-
     echo();
     curs_set(1);
 
@@ -203,16 +201,14 @@ int inputWin( char* question, int y, int x, unsigned int width, unsigned int hei
     if (!input_win)
         return ERR;
 
-    // conversion of scr_width to char_length
     width *= DIS_CONV_FACTOR;
 
     char str[width];
 
     box(input_win, 0, 0);
 
-    wattron(input_win, A_REVERSE);
-    mvwprintw(input_win, 0, (width - strlen(question)) / 2, "%s", question);
-    wattroff(input_win, A_REVERSE);
+    move(0, (width - strlen(question)) / 2);
+    printWithAttribute(input_win, A_REVERSE, question);
 
     refresh();
     wrefresh(input_win);
@@ -240,34 +236,6 @@ int inputWin( char* question, int y, int x, unsigned int width, unsigned int hei
     return OK;
 }
 
-// main display loop
-int loop(int *status)
-{
-    bool exit = FALSE;
-    int main_menu_option;
-    while (!exit)
-    {
-        main_menu_option = main_menu(status);
-        switch (main_menu_option)
-        {
-        case 0:
-            createProjectScreen();
-            continue;
-        case 2:
-            showProjectScreen();
-            continue;
-
-        case 4:
-            exit = TRUE;
-            break;
-        default:
-            status = ERR;
-            exit = TRUE;
-        }
-    }
-
-    return main_menu_option;
-};
 
 void createProjectScreen()
 {
@@ -315,84 +283,26 @@ void createProjectScreen()
 
 }
 
-void showProjectScreen()
-{
-    // Clear the screen
-    clear();
-    refresh();
 
-    // Gets the height and width
-    int max_y, max_x;
-    getmaxyx(stdscr, max_y, max_x);
-
-    // Create the top window
-    WINDOW* top_win = newwin(max_y / 2 - 2, max_x - 2, 1, 1);
-    refresh();
-    box(top_win, 0, 0);
-    wprintw(top_win, "Projetos");
-    int process = showProjects(top_win);
-    wrefresh(top_win);
+void printWithColor(WINDOW* win, Color color, char* str){
+    if(!isColorInit(color)) initColor(color);
+    
+    wattron(win, COLOR_PAIR(color));
+    wprintw(win, "%s", str);
+    wattroff(win, COLOR_PAIR(color));
+}
 
 
-    // Create the half-screen windows
-    WINDOW* botL_win = newwin((max_y / 2 - 2), (max_x / 2) - 1, (max_y / 2) + 1, 1);
-    refresh();
-    box(botL_win, 0, 0);
-    wrefresh(botL_win);
+void printWithAttribute(WINDOW* win, int attr, char* str){
 
-    WINDOW* botR_win = newwin((max_y / 2 - 2), (max_x / 2) - 1, (max_y / 2) + 1, (max_x / 2) + 1);
+    wattron(win, attr);
+    wprintw(win, "%s", str);
+    wattroff(win, attr);
+}
 
-    refresh();
-    box(botR_win, 0, 0);
-    wrefresh(botR_win);
 
-    char *options[] = { "Voltar" };
-
-    char *question;
-    int num_options;
-    int title_width;
-    int choice;
-    int nProjects = getNumbProjects();
-
-    if (process == -1)
-    {
-        // creating select menu
-
-        question = "Não existem projetos";
-        num_options = sizeof(options) / sizeof(char *);
-        title_width = (strlen(question) + 10)/2;
-        choice = selectWin(options, question, num_options, max_y * 5 / 8, max_x / 4 - title_width, 0, 0, 0);
-
-        bool exit = FALSE;
-
-        while (!exit)
-        {
-            switch (choice)
-            {
-            case 0:
-                clear();
-                refresh();
-                exit = TRUE;
-                break;
-            default:
-                clear();
-                refresh();
-                exit = TRUE;
-            }
-        }
-
-    }
-    else
-    {
-        // creating select menu
-        for (int i = 0; i < nProjects; i++)
-        {
-            options[i] = strcat("Projeto ", (char)(i + 1));
-        }
-        question = "Selecione um projeto:";
-        num_options = sizeof(options) / sizeof(char *);
-        title_width = (strlen(question) + 10)/2;
-        choice = selectWin(options, question, num_options, max_y * 5 / 8, max_x / 4 - title_width, 0, 0, 0);
-    }
-
+static void _printUnhandledColor(WINDOW* win, Color color, char* str) {
+    wattron(win, COLOR_PAIR(color));
+    wprintw(win, "%s", str);
+    wattroff(win, COLOR_PAIR(color));
 }
