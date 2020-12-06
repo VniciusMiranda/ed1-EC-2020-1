@@ -256,6 +256,7 @@ int loop(int *status)
         case 2:
             showProjectScreen();
             continue;
+
         case 4:
             exit = TRUE;
             break;
@@ -279,6 +280,7 @@ void createProjectScreen()
     getmaxyx(stdscr, max_y, max_x);
 
     // Create the top window
+
     WINDOW* top_win = newwin(max_y / 2 - 2, max_x - 2, 1, 1);
     refresh();
     box(top_win, 0, 0);
@@ -331,6 +333,7 @@ void showProjectScreen()
     int process = showProjects(top_win);
     wrefresh(top_win);
 
+
     // Create the half-screen windows
     WINDOW* botL_win = newwin((max_y / 2 - 2), (max_x / 2) - 1, (max_y / 2) + 1, 1);
     refresh();
@@ -338,6 +341,7 @@ void showProjectScreen()
     wrefresh(botL_win);
 
     WINDOW* botR_win = newwin((max_y / 2 - 2), (max_x / 2) - 1, (max_y / 2) + 1, (max_x / 2) + 1);
+
     refresh();
     box(botR_win, 0, 0);
     wrefresh(botR_win);
@@ -353,6 +357,7 @@ void showProjectScreen()
     if (process == -1)
     {
         // creating select menu
+
         question = "Não existem projetos";
         num_options = sizeof(options) / sizeof(char *);
         title_width = (strlen(question) + 10)/2;
@@ -375,6 +380,7 @@ void showProjectScreen()
                 exit = TRUE;
             }
         }
+
     }
     else
     {
@@ -388,4 +394,5 @@ void showProjectScreen()
         title_width = (strlen(question) + 10)/2;
         choice = selectWin(options, question, num_options, max_y * 5 / 8, max_x / 4 - title_width, 0, 0, 0);
     }
+
 }

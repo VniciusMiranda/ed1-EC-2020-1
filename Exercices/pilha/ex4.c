@@ -9,7 +9,7 @@
 typedef struct elemento{
     char c[20];
     struct elemento* prox;
-    
+
 } Elemento_t;
 
 typedef Elemento_t* Pilha_t;
@@ -21,7 +21,8 @@ int restart(Pilha_t* p);
 
 int push(Pilha_t* p, char* c);
 
-char* pop(Pilha_t* p);
+//char* pop(Pilha_t* p);
+int pop(Pilha_t* p);
 
 char* top(Pilha_t p);
 
@@ -29,15 +30,19 @@ bool is_empty(Pilha_t* p);
 
 
 int main(){
-    int t;
-    char s[20];
+
     char direction[20], street[20];
+    char s[20];
+
+    int t;
 
     scanf("%d", &t);
 
     while(t--)
     {
+
         push(&p, "CASA");
+
         while(True)
         {
             scanf("%s", s);
@@ -45,7 +50,6 @@ int main(){
             if(!strcmp("ESCOLA", s)) break;
             push(&p, s);
         }
-
 
         while(!is_empty(&p))
         {
@@ -57,12 +61,12 @@ int main(){
 
 
             if(!strcmp(street, "CASA"))
-                printf("Vire a %s na rua %s.\n", direction, street);
-
-            else
                 printf("Vire a %s na sua %s.\n", direction, street);
 
-        }    
+            else
+                printf("Vire a %s na rua %s.\n", direction, street);
+
+        }
     }
 
 
@@ -85,7 +89,7 @@ int restart(Pilha_t* p){
 int push(Pilha_t* p, char* c){
 
     Elemento_t* novo_elemento = (Elemento_t*) malloc(sizeof(Elemento_t));
-    if(!novo_elemento) return -1; 
+    if(!novo_elemento) return -1;
 
 
     strcpy(novo_elemento->c, c);
@@ -101,17 +105,31 @@ int push(Pilha_t* p, char* c){
 bool is_empty(Pilha_t* p){ return !(*p); }
 
 
-char* pop(Pilha_t* p){
+/*char* pop(Pilha_t* p){
     if(!*p) return '\0';
 
     // top element
     Elemento_t* top = *p;
-    char* c;    
+    char* c;
     strcpy(c, top->c);
     *p = top->prox;
     free(top);
 
     return c;
+}*/
+
+
+int pop(Pilha_t* p){
+    if(!*p) return -1;
+
+    // top element
+    Elemento_t* top = *p;
+    //char* c;
+    //strcpy(c, top->c);
+    *p = top->prox;
+    free(top);
+
+    return 1;
 }
 
 

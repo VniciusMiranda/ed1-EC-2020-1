@@ -45,16 +45,23 @@ OBS:Essa funcionalidade podera ou não ser implementada de acordo com o andament
 O Gerenciador de projetos utilizará a linguagem de programação C e a biblioteca visual ncurses.
 
 ### Como Compilar e Rodar
+Dentro do  diretório *project*, siga as seguintes instruções.
 
-dentro do  diretório *project*, rode o seguinte commando: 
+Crie os diretórios "executable" e "obj":
 
 ```
-make
+mkdir executable/ obj/
+```
 
-./executable/project-organizer
+Compile o código usando make:
+```
+make
 ```
 
 agora apenas rode o executavel e seja feliz :)
+```
+./executable/project-organizer
+```
 
 ### Autores
 

@@ -15,11 +15,13 @@ int createProject(Title title, Description description, Collaborator collaborato
         return ERR;
     if (!collaborator)
         return ERR;
+
     Project project = (Project)malloc(sizeof(Project_Element_t));
     if (!project)
         return ERR;
     project->title = title;
     project->description = description;
+
     project->win = NULL;
     project->next = NULL;
     project->firstCollaborator = collaborator;
@@ -42,6 +44,7 @@ int createProject(Title title, Description description, Collaborator collaborato
 int showProjects(WINDOW *w)
 {
     Project actual = firstProject;
+
     int title_len;
     if (!actual)
     {
@@ -50,6 +53,7 @@ int showProjects(WINDOW *w)
     }
     while (actual)
     {
+
         title_len = strlen(actual->title);
         actual->win = newwin(PROJECT_DISPLAY_HEIGHT, PROJECT_DISPLAY_WIDTH, 4, lastWidth + 1);
         refresh();
@@ -123,6 +127,7 @@ int showProjectCollaborators(Project project, WINDOW *w)
 }
 
 /*
+
 int editCollaboratorProfile(Project project, Name name)
 {
     if (!project)
@@ -155,6 +160,7 @@ int editCollaboratorProfile(Project project, Name name)
     }
     return ERR;
 }
+
 */
 
 int deleteProject(Project project)
@@ -182,6 +188,7 @@ int deleteProject(Project project)
         {
             aux = actual->next;
             actual->next = aux->next;
+r
             free(aux);
             return OK;
         }
@@ -190,6 +197,7 @@ int deleteProject(Project project)
     }
     return ERR;
 }
+
 
 int deleteCollaborator(Project project, Collaborator collaborator)
 {
@@ -218,11 +226,13 @@ int deleteCollaborator(Project project, Collaborator collaborator)
             if (aux->next != NULL)
             {
                 aux->next = actual;
+
             }
             free(aux);
             return OK;
         }
         actual = actual->next;
+
     }
     return ERR;
 }
@@ -230,6 +240,7 @@ int deleteCollaborator(Project project, Collaborator collaborator)
 //OK
 int getNumbProjects()
 {
+
     Project actual = firstProject;
     int n = 0;
     if (firstProject)
