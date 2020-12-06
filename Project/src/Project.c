@@ -1,127 +1,134 @@
-#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "Project.h"
 
 #define PROJECT_DISPLAY_WIDTH 25
-#define PROJECT_DISPLAY_HEIGHT 6 
+#define PROJECT_DISPLAY_HEIGHT 16
 
 int lastWidth = 0;
+Project firstProject = NULL;
 
-Project createProject(Title title, Description description)
+//OK
+int createProject(Title title, Description description, Collaborator collaborator)
 {
     if (strlen(title) >= TITLE_SIZE || strlen(description) >= DESCRIPTION_SIZE)
-        return ERROR;
+        return ERR;
+    if (!collaborator)
+        return ERR;
     Project project = (Project)malloc(sizeof(Project_Element_t));
     if (!project)
-        return ERROR;
+        return ERR;
     project->title = title;
     project->description = description;
-    CollaboratorsListElement collaboratorsListElement = (CollaboratorsListElement)malloc(sizeof(Collaborators_List_Element_t));
-    if (!collaboratorsListElement)
-        return ERROR;
-    collaboratorsListElement->id = 0;
-    collaboratorsListElement->collaborator = NULL;
-    collaboratorsListElement->prev_collaboratorsListElement = NULL;
-    collaboratorsListElement->next_collaboratorsListElement = NULL;
-    project->collaboratorsListElement = collaboratorsListElement;
-    return project;
+    project->win = NULL;
+    project->next = NULL;
+    project->firstCollaborator = collaborator;
+    if(!firstProject){
+        firstProject = project;
+    }
+        Project actual = firstProject;
+        while(actual)
+        {   
+            if(!actual->next){
+                actual->next = project;
+                return OK;
+            }
+            actual = actual->next;
+        }
+    return OK;
 }
 
-int showProjects(WINDOW w)
+//OK
+int showProjects(WINDOW *w)
 {
-    ProjectListElement actual = firstProject;
+    Project actual = firstProject;
     int title_len;
     if (!actual)
+    {
         mvwprintw(w, 2, 3, "VAZIO");
-        wrefresh(w);
-        return SUCCESS;
+        return ERR;
+    }
     while (actual)
     {
-        title_len = strlen(actual->project->title);
+        title_len = strlen(actual->title);
         actual->win = newwin(PROJECT_DISPLAY_HEIGHT, PROJECT_DISPLAY_WIDTH, 4, lastWidth + 1);
         refresh();
         box(actual->win, 0, 0);
-        mvwprintw(actual->w, (PROJECT_DISPLAY_HEIGHT - 2)/2, (PROJECT_DISPLAY_WIDTH - title_len)/2, "%s", actual->project->title);
+        mvwprintw(actual->win, 0, (PROJECT_DISPLAY_WIDTH - title_len) / 2, "%s", actual->title);
+        mvwprintw(actual->win, 4, 2, "Descrição");
+        mvwprintw(actual->win, 6, 2, "%s", actual->description);
         wrefresh(actual->win);
-        actual = actual->next_project;
+        actual = actual->next;
         lastWidth += (PROJECT_DISPLAY_WIDTH + 1);
     }
-    return SUCCESS;
+    lastWidth = 0;
+    return OK;
 }
 
-int showProjectDetails(Project project)
+int createCollaborator(Name name, Email email, Description description, Project project)
 {
-    if (!project)
-        return ERROR;
-    CollaboratorsListElement actual = project->collaboratorsListElement;
-    printf("\n\n%d | Projeto %s\nDescricao: %s\nColaboradores:", project->id, project->title, project->description);
-    if (actual->collaborator == NULL)
-        printf("Sem colaboradores.");
-    while (actual)
-    {
-        printf("%s\n", actual->collaborator->name);
-        actual = actual->next_collaboratorsListElement;
-    }
-    return SUCCESS
-}
-
-int showProjectCollaboratorsList(Project project)
-{
-    if (!project)
-        return ERROR;
-    CollaboratorsListElement actual = project->collaboratorsListElement;
-    printf("\n\nColaboradores:");
-    if (actual->collaborator == NULL)
-        printf("Sem colaboradores.");
-    while (actual)
-    {
-        printf("%sn", actual->collaborator->name);
-        actual = actual->next_collaboratorsListElement;
-    }
-    return SUCCESS;
-}
-
-int showCollaboratorProfile(Project project, Name name)
-{
-    if (!project)
-        return ERROR;
-    CollaboratorsListElement actual = project->collaboratorsListElement;
-    if (strlen(name) >= NAME_SIZE)
-        return ERROR;
-    while (actual)
-    {
-        if (!strcmp(name, actual->collaborator->name))
-        {
-            printf("\nNome: %s\nEmail: %s\nDescricao: %s\n", actual->collaborator->name, actual->collaborator->email, actual->collaborator->description);
-            return SUCCESS;
-        }
-        else
-        {
-            actual = actual->next_collaboratorsListElement;
-        }
-    }
-    return ERROR;
-}
-
-Collaborator createCollaboratorProfile(Name name, Email email, Description description)
-{
-    if (strlen(name) >= NAME_SIZE || strlen(email) >= EMAIL_SIZE || strlen(description) >= DESCRIPTION_SIZE)
-        return ERROR;
+    if (strlen(name) > NAME_SIZE || strlen(email) > EMAIL_SIZE || strlen(description) > DESCRIPTION_SIZE || !project)
+        return ERR;
     Collaborator collaborator = (Collaborator)malloc(sizeof(Collaborator_Element_t));
     if (!collaborator)
-        return ERROR;
+        return ERR;
     collaborator->name = name;
     collaborator->email = email;
     collaborator->description = description;
-    return collaborator;
+    collaborator->next = NULL;
+    collaborator->win = NULL;
+    if(!project->firstCollaborator){
+        project->firstCollaborator = collaborator;
+    }
+        Collaborator actual = project->firstCollaborator;
+        while(actual)
+        {   
+            if(!actual->next){
+                actual->next = collaborator;
+                return OK;
+            }
+            actual = actual->next;
+        }
+    return OK;
 }
 
+int showProjectCollaborators(Project project, WINDOW *w)
+{
+    if (!project || !w)
+        return ERR;
+    Collaborator actual = project->firstCollaborator;
+    int title_len;
+    mvwprintw(w, 2, 3, "Colaboradores");
+    if (!actual)
+        mvwprintw(w, 6, 3, "Sem colaboradores");
+    while (actual)
+    {
+        title_len = strlen(project->title);
+        actual->win = newwin(PROJECT_DISPLAY_HEIGHT, PROJECT_DISPLAY_WIDTH, 4, lastWidth + 1);
+        refresh();
+        box(actual->win, 0, 0);
+        mvwprintw(actual->win, 0, (PROJECT_DISPLAY_WIDTH - title_len) / 2, "%s", project->title);
+        mvwprintw(actual->win, 4, 2, "Nome:");
+        mvwprintw(actual->win, 6, 2, "%s", actual->name);
+        mvwprintw(actual->win, 8, 2, "E-mail:");
+        mvwprintw(actual->win, 10, 2, "%s", actual->email);
+        mvwprintw(actual->win, 12, 2, "Descrição:");
+        mvwprintw(actual->win, 14, 2, "%s", actual->description);
+        wrefresh(actual->win);
+        actual = actual->next;
+        lastWidth += (PROJECT_DISPLAY_WIDTH + 1);
+    }
+    lastWidth = 0;
+    return OK;
+}
+
+/*
 int editCollaboratorProfile(Project project, Name name)
 {
     if (!project)
-        return ERROR;
+        return ERR;
     if (strlen(name) >= NAME_SIZE)
-        return ERROR;
+        return ERR;
     CollaboratorsListElement actual = project->collaboratorsListElement;
     while (actual)
     {
@@ -130,155 +137,117 @@ int editCollaboratorProfile(Project project, Name name)
             printf("Nome: ");
             scanf(" %s", actual->collaborator->name);
             if (strlen(actual->collaborator->name) >= NAME_SIZE)
-                return ERROR;
+                return ERR;
             printf("Email: ");
             scanf(" %s", actual->collaborator->email);
             if (strlen(actual->collaborator->email) >= EMAIL_SIZE)
-                return ERROR;
+                return ERR;
             printf("Descricao: ");
             scanf(" %s", actual->collaborator->description);
             if (strlen(actual->collaborator->description) >= DESCRIPTION_SIZE)
-                return ERROR;
-            return SUCCESS;
+                return ERR;
+            return OK;
         }
         else
         {
             actual = actual->next_collaboratorsListElement;
         }
     }
-    return ERROR;
+    return ERR;
 }
-
-int pushProject(Project project)
-{
-    if (!project)
-        return ERROR;
-    ProjectListElement actual = firstProject;
-    if (firstProject)
-    {
-        while (actual)
-        {
-            if (actual->next_project == NULL)
-            {
-                actual->next_project->id = actual->id + 1;
-                actual->next_project->win = NULL;
-                actual->next_project->project = project;
-                actual->next_project->next_project = NULL;
-                return SUCCESS;
-            }
-            actual = actual->next_project;
-        }
-    }
-    else
-    {
-        firstProject->id = 1;
-        firstProject->win = NULL;
-        firstProject->next_project = NULL;
-        firstProject->project = project;
-    }
-}
+*/
 
 int deleteProject(Project project)
 {
-    ProjectListElement actual = firstProject, aux;
+    Project actual = firstProject, aux;
     if (!firstProject || !project)
-        return ERROR;
-    while (actual)
+        return ERR;
+
+    if (actual == project)
     {
-        if (actual->next_project->project == project)
+        if (actual->next == NULL)
         {
-            aux = actual->next_project;
-            actual->next_project = aux->next_project;
-            free(aux);
-            return SUCCESS;
+            firstProject = NULL;
         }
         else
-            actual = actual->next_project;
-    }
-    return ERROR;
-}
-
-int pushCollaborator(Project project, Collaborator collaborator)
-{
-    if (!project || !collaborator)
-        return ERROR;
-    CollaboratorsListElement actual = (CollaboratorsListElement)malloc(sizeof(Collaborators_List_Element_t));
-    if (!actual)
-        return ERROR;
-    CollaboratorsListElement aux;
-    actual = project->collaboratorsListElement;
-    if (actual->collaborator == NULL)
-    {
-        actual->id = 1;
-        actual->collaborator = collaborator;
-        actual->prev_collaboratorsListElement = NULL;
-        actual->next_collaboratorsListElement = NULL;
-        return SUCCESS;
-    }
-    else
-    {
-        while (actual)
         {
-            if (actual->next_collaboratorsListElement == NULL)
-            {
-                aux = actual->next_collaboratorsListElement;
-                aux->id = actual->id + 1;
-                aux->collaborator = collaborator;
-                aux->prev_collaboratorsListElement = actual;
-                aux->next_collaboratorsListElement = NULL;
-                return SUCCESS;
-            }
-            actual = actual->next_collaboratorsListElement;
+            firstProject = actual->next;
+            free(actual);
         }
+        return OK;
     }
+    while (actual)
+    {
+        if (actual->next == project)
+        {
+            aux = actual->next;
+            actual->next = aux->next;
+            free(aux);
+            return OK;
+        }
+        else
+            actual = actual->next;
+    }
+    return ERR;
 }
 
 int deleteCollaborator(Project project, Collaborator collaborator)
 {
-    CollaboratorsListElement actual = project->collaboratorsListElement, aux, firstElement;
-    firstElement = actual;
-    if (!project || !collaborator || firstElement->id == 0)
-        return ERROR;
-    while (actual)
+    Collaborator actual = project->firstCollaborator, aux;
+    if (!project || !collaborator)
+        return ERR;
+    if (actual == collaborator)
     {
-        if (actual->next_collaboratorsListElement->collaborator == collaborator)
+        aux = actual;
+        if (actual->next != NULL)
         {
-            aux = actual->next_collaboratorsListElement;
-            actual->next_collaboratorsListElement = aux->next_collaboratorsListElement;
-            if (aux->next_collaboratorsListElement != NULL)
-            {
-                aux->next_collaboratorsListElement->prev_collaboratorsListElement = actual;
-            }
             free(aux);
-            return SUCCESS;
-        }
-        actual = actual->next_collaboratorsListElement;
-    }
-    return ERROR;
-}
-
-Collaborator searchCollaboratorByName(Project project, Name name)
-{
-    if (!project)
-        return ERROR;
-    CollaboratorsListElement actual = (CollaboratorsListElement)malloc(sizeof(Collaborators_List_Element_t));
-    if (!actual)
-        return ERROR;
-    if (strlen(name) >= NAME_SIZE)
-        return ERROR;
-    actual = project->collaboratorsListElement;
-    while (actual)
-    {
-        if (!strcmp(name, actual->collaborator->name))
-        {
-            return actual->collaborator;
         }
         else
         {
-            actual = actual->next_collaboratorsListElement;
+            actual = NULL;
+        }
+        return OK;
+    }
+    while (actual)
+    {
+        if (actual->next == collaborator)
+        {
+            aux = actual->next;
+            actual->next = aux->next;
+            if (aux->next != NULL)
+            {
+                aux->next = actual;
+            }
+            free(aux);
+            return OK;
+        }
+        actual = actual->next;
+    }
+    return ERR;
+}
+
+//OK
+int getNumbProjects()
+{
+    Project actual = firstProject;
+    int n = 0;
+    if (firstProject)
+    {
+        while (actual)
+        {
+            n++;
+            if (actual->next == NULL)
+            {
+                return n;
+            }
+            actual = actual->next;
         }
     }
-    return ERROR;
+    else
+    {
+        return n;
+    }
 }
 
 int showProjectTasklist(Project project);

@@ -1,23 +1,21 @@
 #include "Label.h"
 
 
-
-
 Label_t* createLabel(Color color, LabelName name){
 
     if(color >= NUMB_COLORS || strlen(name) > LABEL_NAME_SIZE)
-        return (Label_t*) INVALID_INPUT_EXCEPTION; 
-
-    // verifica se a cor já não está sendo usada 
-    if(!AVAILABLE_COLORS[color])
-        return (Label_t*) UNAVAILABLE_COLOR_EXCEPTION;
+        return NULL; 
 
 
-    // aloca memória para a nova label  
     Label_t* new_label = (Label_t*) malloc(sizeof(Label_t));
-    if(!new_label) return (Label_t*) MEMORY_ALOCATION_EXCEPTION;
 
-    // atribui os valores passados a nova label
+    if(!new_label) return NULL;
+
+
+    if(!INIT_PAIRS[color])
+        init_pair(color, color, COLOR_BLACK);
+
+
     setColor(new_label, color);
     setLabelName(new_label, name);
 
@@ -28,11 +26,11 @@ Label_t* createLabel(Color color, LabelName name){
 
 
 
-Exception deleteLabel(Label_t* l){
-    if(!l) return INVALID_INPUT_EXCEPTION;
+int deleteLabel(Label_t* l){
+    if(!l) return ERR;
 
     free(l);
-    return SUCCESS;
+    return OK;
 }
 
 
@@ -42,32 +40,38 @@ Exception deleteLabel(Label_t* l){
 // _______setters__________
 
 
-Exception setColor(Label_t* l, Color c){
-    if(c >= NUMB_COLORS) return INVALID_INPUT_EXCEPTION;
+int setColor(Label_t* l, Color c){
+    if(c >= NUMB_COLORS) return ERR;
 
         l->color = c;
-        return SUCCESS;
+        return OK;
 }
 
 
-Exception setLabelName(Label_t* l, LabelName name){
-    if(strlen(name) > LABEL_NAME_SIZE) return INVALID_INPUT_EXCEPTION;
+
+
+int setLabelName(Label_t* l, LabelName name){
+    if(strlen(name) > LABEL_NAME_SIZE) return ERR;
 
         strcpy(l->name, name);
-        return SUCCESS;
+        return OK;
 }
+
+
 
 
 // _______gettters________
 
 Color getColor(Label_t* l){
-    return l ? l->color : (Color) INVALID_INPUT_EXCEPTION;
+    return l ? l->color : (Color) ERR;
 }
+
+
 
 
 char* getLabelName(Label_t* l){
 
-    return l ? l->name :  (char*) INVALID_INPUT_EXCEPTION;
+    return l ? l->name :  (char*) ERR;
 
 }
 

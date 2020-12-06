@@ -1,25 +1,25 @@
+
 # project directories
-IDIR = include
-SDIR = src
-ODIR = obj
+IDIR := include/
+SDIR := src
+ODIR := obj
 
 # compiler specs
-CC = gcc
-CFLAGS = -I $(IDIR) 
+CC     := gcc
+CFLAGS := -I $(IDIR) 
 
 # executable name
-EXECUTABLE = executable/project-organizer
+EXECUTABLE := executable/project-organizer
 
 # libraries
-LIBS = -lncurses
+LIBS := -lncurses -lpthread 
 
+_DEPS := Label.h Task.h TaskList.h Display.h Project.h
+DEPS  := $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_DEPS= Exceptions.h Label.h Project.h Task.h TaskList.h
-DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
+_OBJ := Label.o main.o  Task.o TaskList.o Display.o MainMenu.o Project.o 
+OBJ  := $(patsubst %,$(ODIR)/%,$(_OBJ))
 
-
-_OBJ = Label.o main.o Project.o Task.o TaskList.o
-OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 
 $(ODIR)/%.o: $(SDIR)/%.c $(DEPS)

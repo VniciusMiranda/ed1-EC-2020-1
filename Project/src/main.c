@@ -1,36 +1,48 @@
 #include <ncurses.h>
+#include "Display.h"
 
-#include "Task.h"
-#include "Project.h"
+#define DEBUG TRUE
 
-showProjectScreen()
-{
-	int max_y, max_x;
-	getmaxyx(stdscr, max_y, max_x);
+// n curses config and project init functions
+void init(){
 
-	WINDOW win = newwin(max_y/2, max_x - 2, 1, 1);
-	refresh();
-	box(win, 0, 0);
-	wprintw(win,"Projetos");
-	showProjects(win);
-	wrefresh(win);
+	initscr();
+	noecho();
+	cbreak();
+	curs_set(0);
 
+	start_color();
+	init_colors();
 }
 
-int main()
-{
-	// inicializa a tela
-	// prepara o buffer de memoria limpa a tela
-	initscr();
-	cbreak();
-	noecho();
-	start_color();
 
-	refresh();
+int main(){
 
-	getch();
+	init();
 
-	// desaloca a memoria e termina ncurses
+
+	int status;
+	int  location = loop(&status);	
+
 	endwin();
+
+	if(status != OK)
+	{
+		printf("an error has occured.\n");
+		printf("status code: %d\n", status);
+		printf("location: %d\n", location);
+		printf(":/\n");
+		return -1;
+	}
+	else if(DEBUG)
+	{
+		printf("status code: %d\n", status);
+		printf("location: %d\n", location);
+		printf(":/\n");
+	}
+
+	printf("bye :)\n");
+
+
 	return 0;
 }
