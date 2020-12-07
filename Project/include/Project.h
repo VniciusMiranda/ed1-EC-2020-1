@@ -3,19 +3,16 @@
 
 #include <ncurses.h>
 
-
 #define TITLE_SIZE 256
 #define DESCRIPTION_SIZE 1024
 #define NAME_SIZE 64
 #define EMAIL_SIZE 64
-
 
 // char* com os tamanhos específicos de title e description
 typedef char Description[DESCRIPTION_SIZE];
 typedef char Title[TITLE_SIZE]; 
 typedef char Name[NAME_SIZE]; 
 typedef char Email[EMAIL_SIZE]; 
-
 
 // Project struct
 typedef struct Project_Element
@@ -29,7 +26,6 @@ typedef struct Project_Element
 } Project_Element_t;
 
 typedef Project_Element_t *Project;
-
 
 // Collaborator struct
 typedef struct Collaborator_Element
@@ -58,7 +54,6 @@ int editCollaboratorProfile(Project project, Name name);
 int deleteProject(Project project);
 
 int deleteCollaborator(Project protect, Collaborator collaborator);
-
 
 int showProjectTasklist(Project project);
 

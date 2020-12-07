@@ -236,54 +236,6 @@ int inputWin( char* question, int y, int x, unsigned int width, unsigned int hei
     return OK;
 }
 
-
-void createProjectScreen()
-{
-    // Clear the screen
-    clear();
-    refresh();
-
-    // Gets the height and width
-    int max_y, max_x;
-    getmaxyx(stdscr, max_y, max_x);
-
-    // Create the top window
-
-    WINDOW* top_win = newwin(max_y / 2 - 2, max_x - 2, 1, 1);
-    refresh();
-    box(top_win, 0, 0);
-    wprintw(top_win, "Novo Projeto");
-    wrefresh(top_win);
-
-    // Create the bottom window
-    WINDOW* bot_win = newwin(max_y / 2 - 2, max_x - 2, max_y / 2 + 1, 1);
-    refresh();
-    box(bot_win, 0, 0);
-    wprintw(bot_win, "Crie seu Projeto");
-    wrefresh(bot_win);
-
-    int EXIT = FALSE, title_width;
-    char *question;
-    char *answer;
-    int c = wgetch(bot_win);
-    while(!EXIT){
-        question = "Digite o nome do projeto:";
-        title_width = strlen(question);
-        mvwprintw(bot_win, 4, (max_x - title_width) / 2, "%s", question);
-        wrefresh(bot_win);
-        scanw(answer);
-        wrefresh(bot_win);
-        if (c == 'j')
-        {
-            EXIT = TRUE;
-            break;
-        }
-        
-    }
-
-}
-
-
 void printWithColor(WINDOW* win, Color color, char* str){
     if(!isColorInit(color)) initColor(color);
     

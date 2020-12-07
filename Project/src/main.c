@@ -37,15 +37,19 @@ int run(int *status)
 	init();
     bool exit = FALSE;
 
-    int main_menu_option = mainMenu(status);
+    int main_menu_option;
 
     while (!exit)
     {
+        main_menu_option = mainMenu(status);
         switch (main_menu_option)
         {
+        case 0:
+            createProjectScreen();
+            continue;
         case 2:
-            exit = TRUE;
-            break;
+            showProjectScreen();
+            continue;
         case 4:
             exit = TRUE;
             break;

@@ -25,18 +25,20 @@ int createProject(Title title, Description description, Collaborator collaborato
     project->win = NULL;
     project->next = NULL;
     project->firstCollaborator = collaborator;
-    if(!firstProject){
+    if (!firstProject)
+    {
         firstProject = project;
     }
-        Project actual = firstProject;
-        while(actual)
-        {   
-            if(!actual->next){
-                actual->next = project;
-                return OK;
-            }
-            actual = actual->next;
+    Project actual = firstProject;
+    while (actual)
+    {
+        if (!actual->next)
+        {
+            actual->next = project;
+            return OK;
         }
+        actual = actual->next;
+    }
     return OK;
 }
 
@@ -69,6 +71,7 @@ int showProjects(WINDOW *w)
     return OK;
 }
 
+//ok
 int createCollaborator(Name name, Email email, Description description, Project project)
 {
     if (strlen(name) > NAME_SIZE || strlen(email) > EMAIL_SIZE || strlen(description) > DESCRIPTION_SIZE || !project)
@@ -81,21 +84,24 @@ int createCollaborator(Name name, Email email, Description description, Project 
     collaborator->description = description;
     collaborator->next = NULL;
     collaborator->win = NULL;
-    if(!project->firstCollaborator){
+    if (!project->firstCollaborator)
+    {
         project->firstCollaborator = collaborator;
     }
-        Collaborator actual = project->firstCollaborator;
-        while(actual)
-        {   
-            if(!actual->next){
-                actual->next = collaborator;
-                return OK;
-            }
-            actual = actual->next;
+    Collaborator actual = project->firstCollaborator;
+    while (actual)
+    {
+        if (!actual->next)
+        {
+            actual->next = collaborator;
+            return OK;
         }
+        actual = actual->next;
+    }
     return OK;
 }
 
+//ok
 int showProjectCollaborators(Project project, WINDOW *w)
 {
     if (!project || !w)
@@ -188,7 +194,7 @@ int deleteProject(Project project)
         {
             aux = actual->next;
             actual->next = aux->next;
-r
+
             free(aux);
             return OK;
         }
@@ -197,7 +203,6 @@ r
     }
     return ERR;
 }
-
 
 int deleteCollaborator(Project project, Collaborator collaborator)
 {
@@ -226,13 +231,11 @@ int deleteCollaborator(Project project, Collaborator collaborator)
             if (aux->next != NULL)
             {
                 aux->next = actual;
-
             }
             free(aux);
             return OK;
         }
         actual = actual->next;
-
     }
     return ERR;
 }
