@@ -292,23 +292,36 @@ void createProjectScreen()
     wprintw(bot_win, "Crie seu Projeto");
     wrefresh(bot_win);
 
-    int EXIT = FALSE, title_width;
+    // Input Windows
+
+    // Inputs
+    int exit = FALSE, title_width;
     char *question;
-    char *answer;
-    int c = wgetch(bot_win);
-    while(!EXIT){
+    char title[TITLE_SIZE];
+    char description[DESCRIPTION_SIZE];
+    while(!exit){
+        echo();
         question = "Digite o nome do projeto:";
         title_width = strlen(question);
-        mvwprintw(bot_win, 4, (max_x - title_width) / 2, "%s", question);
+        mvwprintw(bot_win, 4, 4, "%s", question);
         wrefresh(bot_win);
-        scanw(answer);
+        mvwscanw(bot_win, 4, 6 + title_width, "%s", &title);
         wrefresh(bot_win);
-        if (c == 'j')
-        {
-            EXIT = TRUE;
+        question = "Digite a descrição do Projeto:";
+        title_width = strlen(question);
+        mvwprintw(bot_win, 8, 4, "%s", question);
+        wrefresh(bot_win);
+        mvwscanw(bot_win, 8, 6 + title_width, "%s", &description);
+        wrefresh(bot_win);
+
+        int c = wgetch(bot_win);
+        if(c == 't'){
+            noecho();
+            clear();
+            refresh();
+            exit = TRUE;
             break;
         }
-        
     }
 
 }
