@@ -17,7 +17,7 @@ bool static _isLastNode(TaskElement_t* element) {
 
 
 int static _deleteNode(TaskList_t* taskList, TaskElement_t* del_element) {
-    if (isNullPoitner(taskList) || isNullPointer(del_element))
+    if (isNullPointer(taskList) || isNullPointer(del_element))
         return ERR;
 
     if(_isHeadNode(taskList, del_element)) 

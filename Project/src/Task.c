@@ -35,7 +35,7 @@ Task_t* createTask(char* title, char* description){
 
 int deleteTask(Task_t* t) {
     if(isNullPointer(t)) return ERR;
-    if(isDisplayed(t)) hide(t);
+    if(isDisplayed(t)) hideTask(t);
     free(t);
     return OK;
 }
@@ -124,8 +124,8 @@ int moveTask(Task_t* t, int y, int x, bool selected) {
     if(isNullPointer(t) || isNotDisplayed(t))
         return ERR;
 
-    hide(t);
-    show(t, y, x, selected);
+    hideTask(t);
+    showTask(t, y, x, selected);
 
     return OK;
 }
