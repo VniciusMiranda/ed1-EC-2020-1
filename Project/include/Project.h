@@ -3,8 +3,8 @@
 
 #include <ncurses.h>
 
-#define TITLE_SIZE 256
-#define DESCRIPTION_SIZE 1024
+#define TITLE_SIZE 48
+#define DESCRIPTION_SIZE 512
 #define NAME_SIZE 64
 #define EMAIL_SIZE 64
 
@@ -41,15 +41,13 @@ typedef struct Collaborator_Element
 typedef Collaborator_Element_t *Collaborator;
 
 // Functions
-int createProject(Title title, Description description, Collaborator collaborator);
+Project createProject(Title title, Description description);
 
 int showProjects();
 
 int createCollaborator(Name name, Email email, Description description, Project project);
 
 int showProjectCollaborators(Project project, WINDOW *w);
-
-int editCollaboratorProfile(Project project, Name name);
 
 int deleteProject(Project project);
 

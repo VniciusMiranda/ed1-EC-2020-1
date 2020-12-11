@@ -9,25 +9,24 @@ int lastWidth = 0;
 Project firstProject = NULL;
 
 //OK
-int createProject(Title title, Description description, Collaborator collaborator)
+Project createProject(Title title, Description description)
 {
     if (strlen(title) >= TITLE_SIZE || strlen(description) >= DESCRIPTION_SIZE)
-        return ERR;
-    if (!collaborator)
-        return ERR;
+        return NULL;
 
     Project project = (Project)malloc(sizeof(Project_Element_t));
     if (!project)
-        return ERR;
+        return NULL;
     project->title = title;
     project->description = description;
 
     project->win = NULL;
     project->next = NULL;
-    project->firstCollaborator = collaborator;
+    project->firstCollaborator = NULL;
     if (!firstProject)
     {
         firstProject = project;
+        return project;
     }
     Project actual = firstProject;
     while (actual)
@@ -35,11 +34,10 @@ int createProject(Title title, Description description, Collaborator collaborato
         if (!actual->next)
         {
             actual->next = project;
-            return OK;
+            return project;
         }
         actual = actual->next;
     }
-    return OK;
 }
 
 //OK
@@ -64,6 +62,7 @@ int showProjects(WINDOW *w)
         mvwprintw(actual->win, 4, 2, "Descrição");
         mvwprintw(actual->win, 6, 2, "%s", actual->description);
         wrefresh(actual->win);
+        refresh();
         actual = actual->next;
         lastWidth += (PROJECT_DISPLAY_WIDTH + 1);
     }
@@ -87,6 +86,7 @@ int createCollaborator(Name name, Email email, Description description, Project 
     if (!project->firstCollaborator)
     {
         project->firstCollaborator = collaborator;
+        return OK;
     }
     Collaborator actual = project->firstCollaborator;
     while (actual)
@@ -98,7 +98,6 @@ int createCollaborator(Name name, Email email, Description description, Project 
         }
         actual = actual->next;
     }
-    return OK;
 }
 
 //ok
@@ -131,44 +130,8 @@ int showProjectCollaborators(Project project, WINDOW *w)
     lastWidth = 0;
     return OK;
 }
-
-/*
-
-int editCollaboratorProfile(Project project, Name name)
-{
-    if (!project)
-        return ERR;
-    if (strlen(name) >= NAME_SIZE)
-        return ERR;
-    CollaboratorsListElement actual = project->collaboratorsListElement;
-    while (actual)
-    {
-        if (!strcmp(name, actual->collaborator->name))
-        {
-            printf("Nome: ");
-            scanf(" %s", actual->collaborator->name);
-            if (strlen(actual->collaborator->name) >= NAME_SIZE)
-                return ERR;
-            printf("Email: ");
-            scanf(" %s", actual->collaborator->email);
-            if (strlen(actual->collaborator->email) >= EMAIL_SIZE)
-                return ERR;
-            printf("Descricao: ");
-            scanf(" %s", actual->collaborator->description);
-            if (strlen(actual->collaborator->description) >= DESCRIPTION_SIZE)
-                return ERR;
-            return OK;
-        }
-        else
-        {
-            actual = actual->next_collaboratorsListElement;
-        }
-    }
-    return ERR;
-}
-
-*/
-
+ 
+ //Ok
 int deleteProject(Project project)
 {
     Project actual = firstProject, aux;
@@ -194,16 +157,15 @@ int deleteProject(Project project)
         {
             aux = actual->next;
             actual->next = aux->next;
-
             free(aux);
             return OK;
         }
-        else
-            actual = actual->next;
+        actual = actual->next;
     }
     return ERR;
 }
 
+//Ok
 int deleteCollaborator(Project project, Collaborator collaborator)
 {
     Collaborator actual = project->firstCollaborator, aux;
@@ -213,7 +175,8 @@ int deleteCollaborator(Project project, Collaborator collaborator)
     {
         aux = actual;
         if (actual->next != NULL)
-        {
+        {   
+            project->firstCollaborator = actual->next;
             free(aux);
         }
         else
@@ -228,10 +191,10 @@ int deleteCollaborator(Project project, Collaborator collaborator)
         {
             aux = actual->next;
             actual->next = aux->next;
-            if (aux->next != NULL)
+            /*if (aux->next != NULL)
             {
                 aux->next = actual;
-            }
+            }*/
             free(aux);
             return OK;
         }

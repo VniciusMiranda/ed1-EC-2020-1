@@ -106,6 +106,21 @@ int eraseWin(WINDOW* w, int height, int width){
     return OK;
 }
 
+int clearWin(WINDOW* w, int height, int width){
+    if(!w)
+        return ERR;
+
+    // erase what's inside the window
+    for(int i = 0; i < height; i ++)
+
+        for( int j = 0; j < width; j++)
+            mvwprintw(w, i, j, " ");
+
+     wrefresh(w); 
+
+    return OK;
+}
+
 
 int selectWin(char** options, char* question, int num_options, int y, int x, unsigned int width, unsigned int height,  int default_choice){
 
