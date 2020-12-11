@@ -14,7 +14,7 @@
 
 pthread_t banner_th;
 
-int INIT_PAIRS[NUMB_COLORS];
+bool INIT_PAIRS[NUMB_COLORS];
 bool IS_RESIZED;
 
 int PREV_Y, PREV_X; 
@@ -25,15 +25,19 @@ typedef struct PrintBannerArgs{
     bool* stop;
 } PrintBannerArgs;
 
+typedef unsigned int Color;
 
-void init_colors();
+void initColors();
+
+void initColorsIds();
+
+void initColor(Color color);
+
+bool isColorInit(Color color);
 
 /* this function runs as a thread, so the args need to be passed this way */
 void* printBanner(void* args);
 
-
-/* creates a display context in the display on the given position with the options passed.
-   the context is destroyed when the option is selected */
 int selectWin(char** options, char* question, int num_options, int y, int x, unsigned int width, unsigned int height, int default_choice);
 
 int inputWin(char* question, int y, int x, unsigned int width, unsigned int height, char* answer);
@@ -42,13 +46,14 @@ int infoWin(char* text, int y, int x, unsigned int width, unsigned int height);
 
 int eraseWin(WINDOW* w, int height, int width);
 
-int main_menu(int* err);
+void printWithColor(WINDOW* win, Color color, char* str);
 
-int loop(int* err);
+void printWithAttribute(WINDOW* win, int attr, char* str);
 
-void showProjectScreen();
+int mainMenu(int* err);
 
 void createProjectScreen();
 
+void showProjectScreen();
 
 #endif 

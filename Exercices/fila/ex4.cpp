@@ -6,11 +6,6 @@ using namespace std;
 
 typedef enum { jack, john, jade } Competidor_t; 
 
-void show(list<int> l){
-    for(auto s : l) cout << s << " ";
-    cout << endl;
-}
-
 
 int solve_problems( Competidor_t comp, list<int> problems, int duration, int* problems_solve){
 
@@ -42,13 +37,14 @@ int solve_problems( Competidor_t comp, list<int> problems, int duration, int* pr
 }
 
 Competidor_t getWinner(list<int> problems, int duration, int* points, int* problems_solve){
+
     Competidor_t winner;
     int i = 0, aux = 0, solved;
     *points = 0;
 
     while (i < 3)
     {
-        aux = solve_problems((Competidor_t)i, problems, duration, &solved);
+        aux = solve_problems((Competidor_t) i, problems, duration, &solved);
 
         if (aux > *points)
         {
@@ -56,6 +52,7 @@ Competidor_t getWinner(list<int> problems, int duration, int* points, int* probl
             *points = aux;
             *problems_solve = solved;
         }
+
         i++;
     }
 
