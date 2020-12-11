@@ -7,3 +7,7 @@ bool isNullPointer(void* ptr){
 bool equals(char* str1, char* str2){
     return !strcmp(str1, str2) ? TRUE : FALSE; 
 }
+
+bool errorIn(int err) {
+    return err == ERR;
+}

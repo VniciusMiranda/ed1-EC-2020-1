@@ -6,7 +6,10 @@
 
 
 bool isNullPointer(void* ptr); 
+
 bool equals(char* str1, char* str2);
+
+bool errorIn(int err);
 
 #endif
 
