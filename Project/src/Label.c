@@ -22,6 +22,14 @@ int deleteLabel(Label_t* l){
     return OK;
 }
 
+int copyLabel(Label_t* dest, Label_t* src) {
+    if(isNullPointer(src) || isNullPointer(dest)) return ERR;
+
+    dest->color = src->color;
+    strcpy(dest->name, src->name);
+    return OK;
+}
+
 int setLabelColor(Label_t* l, Color c){
     if(c >= NUMB_COLORS) return ERR;
         l->color = c;

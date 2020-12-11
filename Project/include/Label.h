@@ -17,6 +17,8 @@ Label_t* createLabel(Color color, LabelName name);
 
 int deleteLabel(Label_t* l);
 
+int copyLabel(Label_t* dest, Label_t* src);
+
 int setLabelColor(Label_t* l, Color c);
 
 int setLabelName(Label_t* l, LabelName name);

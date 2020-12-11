@@ -37,6 +37,8 @@ Task_t* createTask(char* title, char* description);
 
 int deleteTask(Task_t* t);
 
+Task_t* copyTask(Task_t* t);
+
 int addLabel(Task_t* t, Label_t* label);
 
 int removeLabel(Task_t* t, LabelName label_name);
@@ -45,15 +47,15 @@ bool isColorAvailable(Task_t* t, Color color);
 
 bool isColorNotAvailable(Task_t* t, Color color);
 
-int show(Task_t* t, unsigned int y, unsigned x, bool selected);
+int showTask(Task_t* t, unsigned int y, unsigned x, bool selected);
 
-int hide(Task_t* t);
+int hideTask(Task_t* t);
+
+int moveTask(Task_t* t, int y, int x, bool selected);
 
 bool isDisplayed(Task_t* t);
 
 bool isNotDisplayed(Task_t* t);
-
-int moveTask(Task_t* t, int y, int x, bool selected);
 
 int setDescription(Task_t* t, char* d);
 

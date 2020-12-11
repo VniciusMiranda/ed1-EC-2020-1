@@ -8,6 +8,10 @@ static void _initLabelArray(Task_t* t);
 
 static int _displayLabels(Task_t* t);
 
+static int _copyLabelArray(Label_t* src, Label_t* dest);
+
+static int _copyAvailableColors(bool* src, bool* dest);
+
 
 Task_t* createTask(char* title, char* description){
     if(strlen(title) >= TASK_DISPLAY_WIDTH)
@@ -34,6 +38,21 @@ int deleteTask(Task_t* t) {
     if(isDisplayed(t)) hide(t);
     free(t);
     return OK;
+}
+
+
+Task_t* copyTask(Task_t* t) {
+    if(isNullPointer(t)) return NULL;
+
+    Task_t* copy = createTask(t->title, t->description);
+
+    copy->numb_labels = t->numb_labels;
+    copy->win = NULL;
+
+    _copyAvailableColors(copy->available_colors, t->available_colors);
+    _copyLabelArray(copy->labels, t->labels);
+
+    return copy;
 }
 
 
@@ -70,7 +89,7 @@ int removeLabel(Task_t* t, LabelName label_name){
 }
 
 
-int show(Task_t* t, unsigned int y, unsigned x, bool selected){
+int showTask(Task_t* t, unsigned int y, unsigned x, bool selected){
     if(isNullPointer(t)) return ERR; 
 
     if(isNotDisplayed(t)) 
@@ -93,7 +112,7 @@ int show(Task_t* t, unsigned int y, unsigned x, bool selected){
 }
 
 
-int hide(Task_t* t) {
+int hideTask(Task_t* t) {
     if(isNullPointer(t) || isNotDisplayed(t)) return ERR; 
 
     eraseWin(t->win, TASK_DISPLAY_HEIGHT, TASK_DISPLAY_WIDTH);
@@ -182,6 +201,23 @@ static void _initAvailableColors(Task_t* t) {
 static void _initLabelArray(Task_t* t) {
     for(int i = 0; i < LABELS_MAX; i++) 
         t->labels[i] = NULL;
+}
+
+
+static int _copyLabelArray(Label_t* dest, Label_t* src){
+    if(isNullPointer(src) || isNullPointer(dest)) return ERR;
+
+    for(int i = 0; i < LABELS_MAX; i++)  copyLabel(dest + i, src + i);
+
+    return OK;
+}
+
+
+static int _copyAvailableColors(bool* dest, bool* src){
+    if(isNullPointer(src) || isNullPointer(dest)) return ERR;
+
+    for(int i = 0; i < NUMB_COLORS; i++) dest[i] = src[i];
+    return OK;
 }
 
 
