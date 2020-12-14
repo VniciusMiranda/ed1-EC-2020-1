@@ -64,11 +64,19 @@ void createProjectScreen()
     mvwscanw(midI_win, 5, 2 + strlen("Digite a quantidade de colaboradores iniciais:"), "%d", &numCol);
     wrefresh(midI_win);
 
-    if (strlen(title) > TITLE_SIZE)
+    if (numCol > 20)
     {
-        goBack(mid_win); // FAZER
+        mvwprintw(mid_win, 12, 12, "Número máximo de colaboradores excedido, tente novamente.");
+        mvwprintw(mid_win, 14, 12, "Pressione uma tecla para sair.");
+        wrefresh(mid_win);
+        refresh();
+        int c = wgetch(mid_win);
+        noecho();
+        clear();
+        refresh();
         return;
     }
+
     // --- END COLLABORATORS ---
 
     // --- DESCRIPTION ---
@@ -334,3 +342,5 @@ void wrong(WINDOW *w)
     clear();
     refresh();
 }
+
+void clearLeftSide(){}

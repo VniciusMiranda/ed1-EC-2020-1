@@ -226,5 +226,3 @@ int getNumbProjects()
         return n;
     }
 }
-
-int showProjectTasklist(Project project);

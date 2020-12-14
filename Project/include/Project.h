@@ -53,8 +53,6 @@ int deleteProject(Project project);
 
 int deleteCollaborator(Project protect, Collaborator collaborator);
 
-int showProjectTasklist(Project project);
-
 int getNumbProjects();
 
 #endif
